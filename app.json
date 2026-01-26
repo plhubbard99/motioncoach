@@ -1,0 +1,66 @@
+{
+  "expo": {
+    "name": "Pocket Coach",
+    "slug": "pocket-coach",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "pocketcoach",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pocketcoach.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Pocket Coach needs camera access to record your athletic movements for form analysis.",
+        "NSMicrophoneUsageDescription": "Pocket Coach needs microphone access to record audio with your training videos.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0066FF",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "package": "com.pocketcoach.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0066FF",
+          "dark": {
+            "backgroundColor": "#121212"
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Pocket Coach needs camera access to record your athletic movements for form analysis.",
+          "microphonePermission": "Pocket Coach needs microphone access to record audio with your training videos.",
+          "recordAudioAndroid": true
+        }
+      ]
+    ],
+    "experiments": {
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bb1549c6-11c4-4045-addc-8eed7c0ca64f"
+      }
+    }
+  }
+}
