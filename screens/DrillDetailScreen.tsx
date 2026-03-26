@@ -76,10 +76,7 @@ function StepCard({
         ) : (
           <ThemedText
             type="body"
-            style={[
-              styles.stepNumberText,
-              { color: theme.primary },
-            ]}
+            style={[styles.stepNumberText, { color: theme.primary }]}
           >
             {stepNumber}
           </ThemedText>
@@ -95,10 +92,7 @@ function StepCard({
         >
           {title}
         </ThemedText>
-        <ThemedText
-          type="small"
-          style={{ color: theme.textSecondary }}
-        >
+        <ThemedText type="small" style={{ color: theme.textSecondary }}>
           {description}
         </ThemedText>
       </View>
@@ -114,17 +108,37 @@ const DEFAULT_DRILL = {
   description:
     "Master the fundamentals of a consistent jump shot. This drill focuses on proper shooting form, release timing, and follow-through mechanics.",
   steps: [
-    { id: "1", title: "Stance Setup", description: "Position feet shoulder-width apart, knees slightly bent" },
-    { id: "2", title: "Ball Placement", description: "Hold ball in shooting pocket at chest level" },
-    { id: "3", title: "Elbow Alignment", description: "Keep shooting elbow under the ball, pointing at target" },
-    { id: "4", title: "Release Motion", description: "Push through legs while extending arm, snap wrist at peak" },
-    { id: "5", title: "Follow Through", description: "Hold finish position, fingers pointing at target" },
+    {
+      id: "1",
+      title: "Stance Setup",
+      description: "Position feet shoulder-width apart, knees slightly bent",
+    },
+    {
+      id: "2",
+      title: "Ball Placement",
+      description: "Hold ball in shooting pocket at chest level",
+    },
+    {
+      id: "3",
+      title: "Elbow Alignment",
+      description: "Keep shooting elbow under the ball, pointing at target",
+    },
+    {
+      id: "4",
+      title: "Release Motion",
+      description: "Push through legs while extending arm, snap wrist at peak",
+    },
+    {
+      id: "5",
+      title: "Follow Through",
+      description: "Hold finish position, fingers pointing at target",
+    },
   ],
 };
 
 function getSportForDrill(drillId: string): string {
   for (const [sport, drills] of Object.entries(SPORT_DRILLS)) {
-    if (drills.some(d => d.id === drillId)) {
+    if (drills.some((d) => d.id === drillId)) {
       return sport;
     }
   }
@@ -141,20 +155,22 @@ export default function DrillDetailScreen({
   const [isPlaying, setIsPlaying] = useState(false);
 
   const contextDrill = getDrillById(drillId);
-  const drill = contextDrill ? {
-    ...contextDrill,
-    sport: getSportForDrill(drillId),
-  } : {
-    ...DEFAULT_DRILL,
-    title: paramTitle || DEFAULT_DRILL.title,
-    focus: paramFocus || DEFAULT_DRILL.focus,
-  };
+  const drill = contextDrill
+    ? {
+        ...contextDrill,
+        sport: getSportForDrill(drillId),
+      }
+    : {
+        ...DEFAULT_DRILL,
+        title: paramTitle || DEFAULT_DRILL.title,
+        focus: paramFocus || DEFAULT_DRILL.focus,
+      };
 
   const toggleStep = (stepId: string) => {
     setCompletedSteps((prev) =>
       prev.includes(stepId)
         ? prev.filter((id) => id !== stepId)
-        : [...prev, stepId]
+        : [...prev, stepId],
     );
   };
 
@@ -172,12 +188,7 @@ export default function DrillDetailScreen({
           onPress={() => setIsPlaying(!isPlaying)}
           style={styles.videoPlaceholder}
         >
-          <View
-            style={[
-              styles.playButton,
-              { backgroundColor: theme.primary },
-            ]}
-          >
+          <View style={[styles.playButton, { backgroundColor: theme.primary }]}>
             <Feather
               name={isPlaying ? "pause" : "play"}
               size={32}
@@ -201,10 +212,7 @@ export default function DrillDetailScreen({
                 color={theme.textSecondary}
                 style={styles.metaIcon}
               />
-              <ThemedText
-                type="small"
-                style={{ color: theme.textSecondary }}
-              >
+              <ThemedText type="small" style={{ color: theme.textSecondary }}>
                 {drill.duration}
               </ThemedText>
             </View>
@@ -227,10 +235,7 @@ export default function DrillDetailScreen({
 
       <Spacer height={Spacing.lg} />
 
-      <ThemedText
-        type="body"
-        style={{ color: theme.textSecondary }}
-      >
+      <ThemedText type="body" style={{ color: theme.textSecondary }}>
         {drill.description}
       </ThemedText>
 
@@ -263,18 +268,23 @@ export default function DrillDetailScreen({
 
       <Spacer height={Spacing.lg} />
 
-      {drill.steps.map((step: { id: string; title: string; description: string }, index: number) => (
-        <React.Fragment key={step.id}>
-          <StepCard
-            stepNumber={index + 1}
-            title={step.title}
-            description={step.description}
-            completed={completedSteps.includes(step.id)}
-            onToggle={() => toggleStep(step.id)}
-          />
-          <Spacer height={Spacing.sm} />
-        </React.Fragment>
-      ))}
+      {drill.steps.map(
+        (
+          step: { id: string; title: string; description: string },
+          index: number,
+        ) => (
+          <React.Fragment key={step.id}>
+            <StepCard
+              stepNumber={index + 1}
+              title={step.title}
+              description={step.description}
+              completed={completedSteps.includes(step.id)}
+              onToggle={() => toggleStep(step.id)}
+            />
+            <Spacer height={Spacing.sm} />
+          </React.Fragment>
+        ),
+      )}
 
       <Spacer height={Spacing["2xl"]} />
 
@@ -283,10 +293,7 @@ export default function DrillDetailScreen({
 
       <View style={styles.tipRow}>
         <View
-          style={[
-            styles.tipIcon,
-            { backgroundColor: theme.success + "20" },
-          ]}
+          style={[styles.tipIcon, { backgroundColor: theme.success + "20" }]}
         >
           <Feather name="check-circle" size={16} color={theme.success} />
         </View>
@@ -296,10 +303,7 @@ export default function DrillDetailScreen({
       </View>
       <View style={styles.tipRow}>
         <View
-          style={[
-            styles.tipIcon,
-            { backgroundColor: theme.success + "20" },
-          ]}
+          style={[styles.tipIcon, { backgroundColor: theme.success + "20" }]}
         >
           <Feather name="check-circle" size={16} color={theme.success} />
         </View>
@@ -309,10 +313,7 @@ export default function DrillDetailScreen({
       </View>
       <View style={styles.tipRow}>
         <View
-          style={[
-            styles.tipIcon,
-            { backgroundColor: theme.success + "20" },
-          ]}
+          style={[styles.tipIcon, { backgroundColor: theme.success + "20" }]}
         >
           <Feather name="check-circle" size={16} color={theme.success} />
         </View>

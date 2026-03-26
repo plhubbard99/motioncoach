@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Pressable, Switch, Platform, TextInput, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Pressable,
+  Switch,
+  TextInput,
+  Alert,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Animated, {
@@ -13,7 +20,11 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import Spacer from "@/components/Spacer";
 import type { ProfileStackParamList } from "@/navigation/ProfileStackNavigator";
-import { saveApiKey, getApiKey, deleteApiKey, hasApiKey } from "@/services/AnalysisService";
+import {
+  saveApiKey,
+  deleteApiKey,
+  hasApiKey,
+} from "@/services/AnalysisService";
 
 type SettingsScreenProps = {
   navigation: NativeStackNavigationProp<ProfileStackParamList, "Settings">;
@@ -50,10 +61,7 @@ function SettingRow({
   const content = (
     <View style={styles.settingRowContent}>
       <View
-        style={[
-          styles.settingIcon,
-          { backgroundColor: theme.primary + "20" },
-        ]}
+        style={[styles.settingIcon, { backgroundColor: theme.primary + "20" }]}
       >
         <Feather name={icon} size={18} color={theme.primary} />
       </View>
@@ -72,24 +80,13 @@ function SettingRow({
         />
       ) : value ? (
         <View style={styles.settingValueRow}>
-          <ThemedText
-            type="small"
-            style={{ color: theme.textSecondary }}
-          >
+          <ThemedText type="small" style={{ color: theme.textSecondary }}>
             {value}
           </ThemedText>
-          <Feather
-            name="chevron-right"
-            size={18}
-            color={theme.textSecondary}
-          />
+          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
         </View>
       ) : (
-        <Feather
-          name="chevron-right"
-          size={18}
-          color={theme.textSecondary}
-        />
+        <Feather name="chevron-right" size={18} color={theme.textSecondary} />
       )}
     </View>
   );
@@ -117,10 +114,7 @@ function SettingRow({
 
   return (
     <View
-      style={[
-        styles.settingRow,
-        { backgroundColor: theme.backgroundDefault },
-      ]}
+      style={[styles.settingRow, { backgroundColor: theme.backgroundDefault }]}
     >
       {content}
     </View>
@@ -152,7 +146,10 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       return;
     }
     if (!apiKeyInput.startsWith("sk-")) {
-      Alert.alert("Error", "Invalid API key format. Key should start with 'sk-'");
+      Alert.alert(
+        "Error",
+        "Invalid API key format. Key should start with 'sk-'",
+      );
       return;
     }
     setIsSaving(true);
@@ -162,7 +159,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       setShowApiKeyInput(false);
       setApiKeyInput("");
       Alert.alert("Success", "API key saved securely");
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to save API key");
     } finally {
       setIsSaving(false);
@@ -183,7 +180,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             setApiKeyConfigured(false);
           },
         },
-      ]
+      ],
     );
   };
 
@@ -238,15 +235,28 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">AI Analysis</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Configure OpenAI for video biomechanics analysis
       </ThemedText>
       <Spacer height={Spacing.md} />
 
       {apiKeyConfigured ? (
-        <View style={[styles.apiKeyCard, { backgroundColor: theme.backgroundDefault }]}>
+        <View
+          style={[
+            styles.apiKeyCard,
+            { backgroundColor: theme.backgroundDefault },
+          ]}
+        >
           <View style={styles.apiKeyHeader}>
-            <View style={[styles.apiKeyStatus, { backgroundColor: theme.success + "20" }]}>
+            <View
+              style={[
+                styles.apiKeyStatus,
+                { backgroundColor: theme.success + "20" },
+              ]}
+            >
               <Feather name="check-circle" size={16} color={theme.success} />
             </View>
             <View style={styles.apiKeyInfo}>
@@ -260,17 +270,31 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           </View>
           <Pressable
             onPress={handleRemoveApiKey}
-            style={[styles.removeButton, { backgroundColor: theme.warning + "15" }]}
+            style={[
+              styles.removeButton,
+              { backgroundColor: theme.warning + "15" },
+            ]}
           >
             <Feather name="trash-2" size={14} color={theme.warning} />
-            <ThemedText type="small" style={{ color: theme.warning, marginLeft: Spacing.xs }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.warning, marginLeft: Spacing.xs }}
+            >
               Remove
             </ThemedText>
           </Pressable>
         </View>
       ) : showApiKeyInput ? (
-        <View style={[styles.apiKeyCard, { backgroundColor: theme.backgroundDefault }]}>
-          <ThemedText type="small" style={{ color: theme.textSecondary, marginBottom: Spacing.sm }}>
+        <View
+          style={[
+            styles.apiKeyCard,
+            { backgroundColor: theme.backgroundDefault },
+          ]}
+        >
+          <ThemedText
+            type="small"
+            style={{ color: theme.textSecondary, marginBottom: Spacing.sm }}
+          >
             Enter your OpenAI API key to enable AI video analysis
           </ThemedText>
           <TextInput
@@ -315,9 +339,14 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           </View>
           <ThemedText
             type="small"
-            style={{ color: theme.textSecondary, marginTop: Spacing.md, lineHeight: 18 }}
+            style={{
+              color: theme.textSecondary,
+              marginTop: Spacing.md,
+              lineHeight: 18,
+            }}
           >
-            Your key is stored securely on your device using encrypted storage. Get your API key at platform.openai.com
+            Your key is stored securely on your device using encrypted storage.
+            Get your API key at platform.openai.com
           </ThemedText>
         </View>
       ) : (
@@ -353,29 +382,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       <ThemedText type="h4">Support</ThemedText>
       <Spacer height={Spacing.md} />
 
-      <SettingRow
-        icon="help-circle"
-        label="Help Center"
-        onPress={() => {}}
-      />
+      <SettingRow icon="help-circle" label="Help Center" onPress={() => {}} />
       <Spacer height={Spacing.sm} />
-      <SettingRow
-        icon="message-circle"
-        label="Contact Us"
-        onPress={() => {}}
-      />
+      <SettingRow icon="message-circle" label="Contact Us" onPress={() => {}} />
       <Spacer height={Spacing.sm} />
-      <SettingRow
-        icon="file-text"
-        label="Privacy Policy"
-        onPress={() => {}}
-      />
+      <SettingRow icon="file-text" label="Privacy Policy" onPress={() => {}} />
       <Spacer height={Spacing.sm} />
-      <SettingRow
-        icon="book"
-        label="Terms of Service"
-        onPress={() => {}}
-      />
+      <SettingRow icon="book" label="Terms of Service" onPress={() => {}} />
 
       <Spacer height={Spacing["2xl"]} />
 

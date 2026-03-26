@@ -17,10 +17,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
-import {
-  Gesture,
-  GestureDetector,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -58,7 +55,12 @@ export default function VideoPlaybackScreen({
   route,
   navigation,
 }: VideoPlaybackScreenProps) {
-  const { videoId, uri: paramUri, title: paramTitle, sport: paramSport } = route.params;
+  const {
+    videoId,
+    uri: paramUri,
+    title: paramTitle,
+    sport: paramSport,
+  } = route.params;
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const { getVideo } = useVideos();
@@ -82,7 +84,6 @@ export default function VideoPlaybackScreen({
   const [showSpeedIndicator, setShowSpeedIndicator] = useState(false);
   const [isHoldingLeft, setIsHoldingLeft] = useState(false);
   const [isHoldingRight, setIsHoldingRight] = useState(false);
-  const [showSpeedControls, setShowSpeedControls] = useState(true);
 
   const speedIndicatorOpacity = useSharedValue(0);
   const hideSpeedTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -123,19 +124,22 @@ export default function VideoPlaybackScreen({
     return () => clearInterval(interval);
   }, [isPlaying, isSeeking, player]);
 
-  const showSpeedChange = useCallback((speedText: string) => {
-    setShowSpeedIndicator(true);
-    speedIndicatorOpacity.value = withTiming(1, { duration: 150 });
+  const showSpeedChange = useCallback(
+    (speedText: string) => {
+      setShowSpeedIndicator(true);
+      speedIndicatorOpacity.value = withTiming(1, { duration: 150 });
 
-    if (hideSpeedTimeout.current) {
-      clearTimeout(hideSpeedTimeout.current);
-    }
+      if (hideSpeedTimeout.current) {
+        clearTimeout(hideSpeedTimeout.current);
+      }
 
-    hideSpeedTimeout.current = setTimeout(() => {
-      speedIndicatorOpacity.value = withTiming(0, { duration: 300 });
-      setTimeout(() => setShowSpeedIndicator(false), 300);
-    }, 1000);
-  }, [speedIndicatorOpacity]);
+      hideSpeedTimeout.current = setTimeout(() => {
+        speedIndicatorOpacity.value = withTiming(0, { duration: 300 });
+        setTimeout(() => setShowSpeedIndicator(false), 300);
+      }, 1000);
+    },
+    [speedIndicatorOpacity],
+  );
 
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -187,7 +191,7 @@ export default function VideoPlaybackScreen({
       clearTimeout(holdTimerLeft.current);
       holdTimerLeft.current = null;
     }
-    
+
     if (wasHoldingLeft.current) {
       wasHoldingLeft.current = false;
       setIsHoldingLeft(false);
@@ -214,7 +218,7 @@ export default function VideoPlaybackScreen({
       clearTimeout(holdTimerRight.current);
       holdTimerRight.current = null;
     }
-    
+
     if (wasHoldingRight.current) {
       wasHoldingRight.current = false;
       setIsHoldingRight(false);
@@ -265,7 +269,10 @@ export default function VideoPlaybackScreen({
     runOnJS(handleSeek)(newPosition);
   });
 
-  const combinedScrubberGesture = Gesture.Race(scrubberGesture, scrubberTapGesture);
+  const combinedScrubberGesture = Gesture.Race(
+    scrubberGesture,
+    scrubberTapGesture,
+  );
 
   const hasValidVideo = videoUri && videoUri.length > 0;
 
@@ -305,10 +312,7 @@ export default function VideoPlaybackScreen({
 
   return (
     <View style={[styles.container, { backgroundColor: "#000" }]}>
-      <Pressable 
-        style={styles.videoWrapper} 
-        onPress={togglePlayPause}
-      >
+      <Pressable style={styles.videoWrapper} onPress={togglePlayPause}>
         {Platform.OS === "web" ? (
           <View style={styles.webFallback} pointerEvents="none">
             <Feather name="video" size={64} color="rgba(255,255,255,0.5)" />
@@ -331,12 +335,7 @@ export default function VideoPlaybackScreen({
         )}
       </Pressable>
 
-      <View
-        style={[
-          styles.topBar,
-          { paddingTop: insets.top + Spacing.md },
-        ]}
-      >
+      <View style={[styles.topBar, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable
           style={styles.closeButton}
           onPress={() => navigation.goBack()}
@@ -377,7 +376,7 @@ export default function VideoPlaybackScreen({
       >
         <Pressable
           style={[
-            styles.controlButton, 
+            styles.controlButton,
             styles.controlButtonLeft,
             isHoldingLeft && styles.controlButtonActive,
           ]}
@@ -424,7 +423,7 @@ export default function VideoPlaybackScreen({
 
         <Pressable
           style={[
-            styles.controlButton, 
+            styles.controlButton,
             styles.controlButtonRight,
             isHoldingRight && styles.controlButtonActive,
           ]}
@@ -436,7 +435,12 @@ export default function VideoPlaybackScreen({
         </Pressable>
       </View>
 
-      <View style={[styles.speedControlsContainer, { paddingBottom: insets.bottom + Spacing.sm }]}>
+      <View
+        style={[
+          styles.speedControlsContainer,
+          { paddingBottom: insets.bottom + Spacing.sm },
+        ]}
+      >
         <Text style={styles.speedLabel}>Speed:</Text>
         <View style={styles.speedButtonsRow}>
           {SLOW_MO_SPEEDS.map((speed) => (
@@ -448,10 +452,12 @@ export default function VideoPlaybackScreen({
               ]}
               onPress={() => handleSpeedSelect(speed)}
             >
-              <Text style={[
-                styles.speedButtonText,
-                playbackSpeed === speed && { color: '#FFFFFF' },
-              ]}>
+              <Text
+                style={[
+                  styles.speedButtonText,
+                  playbackSpeed === speed && { color: "#FFFFFF" },
+                ]}
+              >
                 {speed}x
               </Text>
             </Pressable>

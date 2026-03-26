@@ -108,7 +108,13 @@ interface DropdownProps {
   compact?: boolean;
 }
 
-function Dropdown({ label, value, placeholder, onPress, compact }: DropdownProps) {
+function Dropdown({
+  label,
+  value,
+  placeholder,
+  onPress,
+  compact,
+}: DropdownProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
   const accent = (theme as any).accent || "#FFB81C";
@@ -119,7 +125,13 @@ function Dropdown({ label, value, placeholder, onPress, compact }: DropdownProps
 
   return (
     <View>
-      <ThemedText type="small" style={[styles.dropdownLabel, { color: theme.primary, fontWeight: "700" }]}>
+      <ThemedText
+        type="small"
+        style={[
+          styles.dropdownLabel,
+          { color: theme.primary, fontWeight: "700" },
+        ]}
+      >
         {label}
       </ThemedText>
       <Spacer height={Spacing.xs} />
@@ -134,7 +146,11 @@ function Dropdown({ label, value, placeholder, onPress, compact }: DropdownProps
         style={[
           styles.dropdown,
           compact ? styles.dropdownCompact : null,
-          { backgroundColor: theme.backgroundDefault, borderColor: value ? accent : theme.border, borderWidth: value ? 2 : 1 },
+          {
+            backgroundColor: theme.backgroundDefault,
+            borderColor: value ? accent : theme.border,
+            borderWidth: value ? 2 : 1,
+          },
           animatedStyle,
         ]}
       >
@@ -164,22 +180,39 @@ interface SelectModalProps {
   onClose: () => void;
 }
 
-function SelectModal({ visible, title, options, onSelect, onClose }: SelectModalProps) {
+function SelectModal({
+  visible,
+  title,
+  options,
+  onSelect,
+  onClose,
+}: SelectModalProps) {
   const { theme } = useTheme();
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={[styles.modalOverlay, { backgroundColor: theme.overlay }]} onPress={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <Pressable
+        style={[styles.modalOverlay, { backgroundColor: theme.overlay }]}
+        onPress={onClose}
+      >
         <Animated.View
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(150)}
-          style={[styles.modalContent, { backgroundColor: theme.backgroundRoot }]}
+          style={[
+            styles.modalContent,
+            { backgroundColor: theme.backgroundRoot },
+          ]}
         >
           <ThemedText type="h4" style={styles.modalTitle}>
             {title}
           </ThemedText>
           <Spacer height={Spacing.md} />
-          <ScrollView 
+          <ScrollView
             showsVerticalScrollIndicator={true}
             style={styles.modalScrollView}
             contentContainerStyle={styles.modalScrollContent}
@@ -193,11 +226,24 @@ function SelectModal({ visible, title, options, onSelect, onClose }: SelectModal
                 }}
                 style={({ pressed }) => [
                   styles.modalOption,
-                  { backgroundColor: pressed ? theme.backgroundSecondary : "transparent" },
+                  {
+                    backgroundColor: pressed
+                      ? theme.backgroundSecondary
+                      : "transparent",
+                  },
                 ]}
               >
-                <View style={[styles.optionIcon, { backgroundColor: theme.primary + "20" }]}>
-                  <Feather name={option.icon as any} size={20} color={theme.primary} />
+                <View
+                  style={[
+                    styles.optionIcon,
+                    { backgroundColor: theme.primary + "20" },
+                  ]}
+                >
+                  <Feather
+                    name={option.icon as any}
+                    size={20}
+                    color={theme.primary}
+                  />
                 </View>
                 <ThemedText type="body" style={styles.optionText}>
                   {option.name}
@@ -219,8 +265,10 @@ interface AthleteDisplayProps {
 function AthleteDisplay({ selectedSport, onPersonalize }: AthleteDisplayProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
-  
-  const imageSource = selectedSport ? SPORT_IMAGES[selectedSport] || SPORT_IMAGES.default : SPORT_IMAGES.default;
+
+  const imageSource = selectedSport
+    ? SPORT_IMAGES[selectedSport] || SPORT_IMAGES.default
+    : SPORT_IMAGES.default;
   const sportLabel = selectedSport || "Ready to Train";
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -230,10 +278,25 @@ function AthleteDisplay({ selectedSport, onPersonalize }: AthleteDisplayProps) {
   return (
     <Animated.View style={[styles.athleteDisplayContainer, animatedStyle]}>
       <View style={styles.athleteCardContainer}>
-        <View style={[styles.athleteCardBackground, { backgroundColor: theme.primary }]}>
-          <View style={[styles.athleteGoldStripe, { backgroundColor: (theme as any).accent || "#FFB81C" }]} />
+        <View
+          style={[
+            styles.athleteCardBackground,
+            { backgroundColor: theme.primary },
+          ]}
+        >
+          <View
+            style={[
+              styles.athleteGoldStripe,
+              { backgroundColor: (theme as any).accent || "#FFB81C" },
+            ]}
+          />
         </View>
-        <View style={[styles.athleteImageWrapper, { borderColor: (theme as any).accent || "#FFB81C", borderWidth: 3 }]}>
+        <View
+          style={[
+            styles.athleteImageWrapper,
+            { borderColor: (theme as any).accent || "#FFB81C", borderWidth: 3 },
+          ]}
+        >
           <Image
             source={imageSource}
             style={styles.athleteImage}
@@ -241,8 +304,16 @@ function AthleteDisplay({ selectedSport, onPersonalize }: AthleteDisplayProps) {
             transition={300}
           />
         </View>
-        <View style={[styles.sportBadge, { backgroundColor: (theme as any).accent || "#FFB81C" }]}>
-          <ThemedText type="small" style={[styles.sportBadgeText, { color: theme.primary }]}>
+        <View
+          style={[
+            styles.sportBadge,
+            { backgroundColor: (theme as any).accent || "#FFB81C" },
+          ]}
+        >
+          <ThemedText
+            type="small"
+            style={[styles.sportBadgeText, { color: theme.primary }]}
+          >
             {sportLabel}
           </ThemedText>
         </View>
@@ -250,10 +321,20 @@ function AthleteDisplay({ selectedSport, onPersonalize }: AthleteDisplayProps) {
       {onPersonalize ? (
         <Pressable
           onPress={onPersonalize}
-          style={[styles.personalizeButton, { backgroundColor: (theme as any).accent || "#FFB81C" }]}
+          style={[
+            styles.personalizeButton,
+            { backgroundColor: (theme as any).accent || "#FFB81C" },
+          ]}
         >
           <Feather name="edit-2" size={14} color="#0A2240" />
-          <ThemedText type="small" style={{ color: "#0A2240", marginLeft: Spacing.xs, fontWeight: "600" }}>
+          <ThemedText
+            type="small"
+            style={{
+              color: "#0A2240",
+              marginLeft: Spacing.xs,
+              fontWeight: "600",
+            }}
+          >
             Personalize
           </ThemedText>
         </Pressable>
@@ -270,7 +351,13 @@ interface AnalysisCardProps {
   onPress: () => void;
 }
 
-function AnalysisCard({ title, date, sport, score, onPress }: AnalysisCardProps) {
+function AnalysisCard({
+  title,
+  date,
+  sport,
+  score,
+  onPress,
+}: AnalysisCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
   const accent = (theme as any).accent || "#FFB81C";
@@ -304,15 +391,33 @@ function AnalysisCard({ title, date, sport, score, onPress }: AnalysisCardProps)
         <Feather name="play" size={20} color={theme.primary} />
       </View>
       <View style={styles.analysisInfo}>
-        <ThemedText type="body" style={[styles.analysisTitle, { color: "#FFFFFF", fontWeight: "600" }]} numberOfLines={1}>
+        <ThemedText
+          type="body"
+          style={[
+            styles.analysisTitle,
+            { color: "#FFFFFF", fontWeight: "600" },
+          ]}
+          numberOfLines={1}
+        >
           {title}
         </ThemedText>
-        <ThemedText type="small" style={[styles.analysisDate, { color: "rgba(255,255,255,0.7)" }]}>
+        <ThemedText
+          type="small"
+          style={[styles.analysisDate, { color: "rgba(255,255,255,0.7)" }]}
+        >
           {sport} - {date}
         </ThemedText>
       </View>
-      <View style={[styles.scoreContainer, { backgroundColor: getScoreColor() }]}>
-        <ThemedText type="small" style={[styles.scoreText, { color: theme.primary, fontWeight: "700" }]}>
+      <View
+        style={[styles.scoreContainer, { backgroundColor: getScoreColor() }]}
+      >
+        <ThemedText
+          type="small"
+          style={[
+            styles.scoreText,
+            { color: theme.primary, fontWeight: "700" },
+          ]}
+        >
           {score}
         </ThemedText>
       </View>
@@ -326,7 +431,11 @@ interface CollapsibleSectionProps {
   defaultOpen?: boolean;
 }
 
-function CollapsibleSection({ title, children, defaultOpen = false }: CollapsibleSectionProps) {
+function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = false,
+}: CollapsibleSectionProps) {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const rotation = useSharedValue(defaultOpen ? 1 : 0);
@@ -342,7 +451,16 @@ function CollapsibleSection({ title, children, defaultOpen = false }: Collapsibl
   }));
 
   return (
-    <View style={[styles.collapsibleSection, { backgroundColor: theme.backgroundDefault, borderLeftColor: accent, borderLeftWidth: 4 }]}>
+    <View
+      style={[
+        styles.collapsibleSection,
+        {
+          backgroundColor: theme.backgroundDefault,
+          borderLeftColor: accent,
+          borderLeftWidth: 4,
+        },
+      ]}
+    >
       <Pressable
         onPress={toggleSection}
         style={({ pressed }) => [
@@ -350,16 +468,33 @@ function CollapsibleSection({ title, children, defaultOpen = false }: Collapsibl
           { opacity: pressed ? 0.8 : 1 },
         ]}
       >
-        <ThemedText type="body" style={[styles.collapsibleTitle, { color: theme.primary, fontWeight: "700" }]}>
+        <ThemedText
+          type="body"
+          style={[
+            styles.collapsibleTitle,
+            { color: theme.primary, fontWeight: "700" },
+          ]}
+        >
           {title}
         </ThemedText>
-        <View style={[styles.collapsibleIconWrapper, { backgroundColor: isOpen ? accent : theme.backgroundSecondary }]}>
+        <View
+          style={[
+            styles.collapsibleIconWrapper,
+            { backgroundColor: isOpen ? accent : theme.backgroundSecondary },
+          ]}
+        >
           <Animated.View style={iconStyle}>
-            <Feather name="chevron-down" size={18} color={isOpen ? "#0A2240" : theme.textSecondary} />
+            <Feather
+              name="chevron-down"
+              size={18}
+              color={isOpen ? "#0A2240" : theme.textSecondary}
+            />
           </Animated.View>
         </View>
       </Pressable>
-      {isOpen ? <View style={styles.collapsibleContent}>{children}</View> : null}
+      {isOpen ? (
+        <View style={styles.collapsibleContent}>{children}</View>
+      ) : null}
     </View>
   );
 }
@@ -372,7 +507,13 @@ interface DrillCardProps {
   onPress: () => void;
 }
 
-function DrillCard({ title, duration, focus, concept, onPress }: DrillCardProps) {
+function DrillCard({
+  title,
+  duration,
+  focus,
+  concept,
+  onPress,
+}: DrillCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
   const accent = (theme as any).accent || "#FFB81C";
@@ -400,15 +541,30 @@ function DrillCard({ title, duration, focus, concept, onPress }: DrillCardProps)
         <Feather name="play-circle" size={18} color="#0A2240" />
       </View>
       <View style={styles.drillInfo}>
-        <ThemedText type="body" style={[styles.drillTitle, { fontWeight: "600" }]} numberOfLines={1}>
+        <ThemedText
+          type="body"
+          style={[styles.drillTitle, { fontWeight: "600" }]}
+          numberOfLines={1}
+        >
           {title}
         </ThemedText>
-        <ThemedText type="small" style={[styles.drillMeta, { color: theme.textSecondary }]}>
+        <ThemedText
+          type="small"
+          style={[styles.drillMeta, { color: theme.textSecondary }]}
+        >
           {duration} - {focus}
         </ThemedText>
         {concept ? (
-          <View style={[styles.conceptBadge, { backgroundColor: (theme as any).accent || "#FFB81C" }]}>
-            <ThemedText type="small" style={[styles.conceptText, { color: "#0A2240" }]}>
+          <View
+            style={[
+              styles.conceptBadge,
+              { backgroundColor: (theme as any).accent || "#FFB81C" },
+            ]}
+          >
+            <ThemedText
+              type="small"
+              style={[styles.conceptText, { color: "#0A2240" }]}
+            >
               {concept}
             </ThemedText>
           </View>
@@ -421,35 +577,81 @@ function DrillCard({ title, duration, focus, concept, onPress }: DrillCardProps)
   );
 }
 
-const MOCK_ANALYSES = [
-  { id: "1", title: "Morning Jump Shot", date: "Today", sport: "Basketball", score: 85 },
-  { id: "2", title: "Golf Swing Practice", date: "Yesterday", sport: "Golf", score: 72 },
-  { id: "3", title: "Sprint Form Check", date: "Dec 28", sport: "Running", score: 68 },
-  { id: "4", title: "Tennis Serve", date: "Dec 27", sport: "Tennis", score: 78 },
-  { id: "5", title: "Pitching Form", date: "Dec 26", sport: "Softball", score: 81 },
-];
-
 const SUGGESTED_WORKOUT = [
-  { id: "1", title: "Core Stability Series", duration: "15 min", focus: "Core Strength" },
-  { id: "2", title: "Hip Mobility Flow", duration: "10 min", focus: "Flexibility" },
+  {
+    id: "1",
+    title: "Core Stability Series",
+    duration: "15 min",
+    focus: "Core Strength",
+  },
+  {
+    id: "2",
+    title: "Hip Mobility Flow",
+    duration: "10 min",
+    focus: "Flexibility",
+  },
 ];
 
 const ADDITIONAL_DRILLS_STRENGTH = [
   { id: "1", title: "Elbow Position Drill", duration: "5 min", focus: "Form" },
-  { id: "2", title: "Wrist Snap Practice", duration: "8 min", focus: "Technique" },
+  {
+    id: "2",
+    title: "Wrist Snap Practice",
+    duration: "8 min",
+    focus: "Technique",
+  },
 ];
 
 const ADDITIONAL_DRILLS_ACCURACY = [
-  { id: "1", title: "Target Practice Drill", duration: "10 min", focus: "Precision" },
-  { id: "2", title: "Follow-Through Focus", duration: "6 min", focus: "Consistency" },
-  { id: "3", title: "Release Point Training", duration: "8 min", focus: "Accuracy" },
+  {
+    id: "1",
+    title: "Target Practice Drill",
+    duration: "10 min",
+    focus: "Precision",
+  },
+  {
+    id: "2",
+    title: "Follow-Through Focus",
+    duration: "6 min",
+    focus: "Consistency",
+  },
+  {
+    id: "3",
+    title: "Release Point Training",
+    duration: "8 min",
+    focus: "Accuracy",
+  },
 ];
 
 const CONTINUED_TRAINING = [
-  { id: "1", title: "Arm Slot Consistency", duration: "6 min", focus: "Technique", concept: "Throwing Mechanics" },
-  { id: "2", title: "Lower Body Drive", duration: "10 min", focus: "Power", concept: "Throwing Mechanics" },
-  { id: "3", title: "Balance Point Holds", duration: "5 min", focus: "Stability", concept: "Balance & Control" },
-  { id: "4", title: "Stride Length Drills", duration: "8 min", focus: "Form", concept: "Balance & Control" },
+  {
+    id: "1",
+    title: "Arm Slot Consistency",
+    duration: "6 min",
+    focus: "Technique",
+    concept: "Throwing Mechanics",
+  },
+  {
+    id: "2",
+    title: "Lower Body Drive",
+    duration: "10 min",
+    focus: "Power",
+    concept: "Throwing Mechanics",
+  },
+  {
+    id: "3",
+    title: "Balance Point Holds",
+    duration: "5 min",
+    focus: "Stability",
+    concept: "Balance & Control",
+  },
+  {
+    id: "4",
+    title: "Stride Length Drills",
+    duration: "8 min",
+    focus: "Form",
+    concept: "Balance & Control",
+  },
 ];
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
@@ -477,7 +679,9 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const handleNextStepSelect = (option: { id: string; name: string }) => {
     setSelectedNextStep(option.name);
     if (option.id === "record") {
-      navigation.getParent()?.navigate("RecordModal", { sport: selectedSport || "Training" });
+      navigation
+        .getParent()
+        ?.navigate("RecordModal", { sport: selectedSport || "Training" });
     } else if (option.id === "review") {
       navigation.getParent()?.navigate("MainTabs", { screen: "LibraryTab" });
     }
@@ -491,8 +695,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     });
   };
 
-  const handlePersonalizeImage = () => {
-  };
+  const handlePersonalizeImage = () => {};
 
   return (
     <ScreenScrollView>
@@ -530,7 +733,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
         <ThemedText type="h4">Recent Analysis</ThemedText>
         {hasVideos ? (
           <Pressable
-            onPress={() => navigation.getParent()?.navigate("MainTabs", { screen: "LibraryTab" })}
+            onPress={() =>
+              navigation
+                .getParent()
+                ?.navigate("MainTabs", { screen: "LibraryTab" })
+            }
             hitSlop={8}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
           >
@@ -554,19 +761,37 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                 date={analysis.date}
                 sport={analysis.sport}
                 score={analysis.score}
-                onPress={() => navigation.navigate("AnalysisResult", { analysisId: analysis.id, videoId: analysis.id })}
+                onPress={() =>
+                  navigation.navigate("AnalysisResult", {
+                    analysisId: analysis.id,
+                    videoId: analysis.id,
+                  })
+                }
               />
-              {index < recentRecordings.length - 1 ? <View style={{ width: Spacing.md }} /> : null}
+              {index < recentRecordings.length - 1 ? (
+                <View style={{ width: Spacing.md }} />
+              ) : null}
             </React.Fragment>
           ))}
         </ScrollView>
       ) : (
-        <View style={[styles.emptyState, { backgroundColor: theme.backgroundSecondary }]}>
+        <View
+          style={[
+            styles.emptyState,
+            { backgroundColor: theme.backgroundSecondary },
+          ]}
+        >
           <Feather name="video" size={32} color={theme.textSecondary} />
-          <ThemedText type="body" style={[styles.emptyStateText, { color: theme.textSecondary }]}>
+          <ThemedText
+            type="body"
+            style={[styles.emptyStateText, { color: theme.textSecondary }]}
+          >
             No recordings yet
           </ThemedText>
-          <ThemedText type="small" style={[styles.emptyStateSubtext, { color: theme.textSecondary }]}>
+          <ThemedText
+            type="small"
+            style={[styles.emptyStateSubtext, { color: theme.textSecondary }]}
+          >
             Select a sport above and record your first session
           </ThemedText>
         </View>
@@ -617,7 +842,10 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       <Spacer height={Spacing.md} />
 
       <CollapsibleSection title="Continued Training" defaultOpen>
-        <ThemedText type="small" style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+        <ThemedText
+          type="small"
+          style={[styles.sectionSubtitle, { color: theme.textSecondary }]}
+        >
           Drills grouped by concept
         </ThemedText>
         <Spacer height={Spacing.sm} />

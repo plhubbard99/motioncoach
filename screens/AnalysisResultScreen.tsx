@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Pressable, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import {
+  RouteProp,
+  useNavigation as useRootNavigation,
+  NavigationProp,
+  ParamListBase,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Animated, {
   useAnimatedStyle,
@@ -9,7 +14,6 @@ import Animated, {
   withSpring,
   withTiming,
   FadeIn,
-  FadeOut,
 } from "react-native-reanimated";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -18,8 +22,7 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import Spacer from "@/components/Spacer";
 import type { HomeStackParamList } from "@/navigation/HomeStackNavigator";
 import { useVideos } from "@/contexts/VideoContext";
-import { useNavigation as useRootNavigation, NavigationProp, ParamListBase } from "@react-navigation/native";
-import type { AnalysisResult, BiomechanicsMetric } from "@/services/AnalysisService";
+import type { BiomechanicsMetric } from "@/services/AnalysisService";
 import { SkeletonOverlay } from "@/components/SkeletonOverlay";
 
 type AnalysisResultScreenProps = {
@@ -37,7 +40,13 @@ interface StillImageProps {
   onPress: () => void;
 }
 
-function StillImage({ timestamp, label, description, isKeyPoint, onPress }: StillImageProps) {
+function StillImage({
+  timestamp,
+  label,
+  description,
+  isKeyPoint,
+  onPress,
+}: StillImageProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
 
@@ -64,21 +73,33 @@ function StillImage({ timestamp, label, description, isKeyPoint, onPress }: Stil
       <View style={styles.stillImageContent}>
         <Feather name="image" size={24} color={theme.textSecondary} />
       </View>
-      <View style={[styles.timestampBadge, { backgroundColor: "rgba(0,0,0,0.7)" }]}>
+      <View
+        style={[styles.timestampBadge, { backgroundColor: "rgba(0,0,0,0.7)" }]}
+      >
         <ThemedText type="small" style={styles.timestampText}>
           {timestamp}
         </ThemedText>
       </View>
       {isKeyPoint ? (
-        <View style={[styles.keyPointBadge, { backgroundColor: theme.warning }]}>
+        <View
+          style={[styles.keyPointBadge, { backgroundColor: theme.warning }]}
+        >
           <Feather name="alert-circle" size={10} color="#FFFFFF" />
         </View>
       ) : null}
       <View style={styles.stillImageInfo}>
-        <ThemedText type="small" style={{ fontWeight: "600" }} numberOfLines={1}>
+        <ThemedText
+          type="small"
+          style={{ fontWeight: "600" }}
+          numberOfLines={1}
+        >
           {label}
         </ThemedText>
-        <ThemedText type="small" style={{ color: theme.textSecondary, fontSize: 11 }} numberOfLines={1}>
+        <ThemedText
+          type="small"
+          style={{ color: theme.textSecondary, fontSize: 11 }}
+          numberOfLines={1}
+        >
           {description}
         </ThemedText>
       </View>
@@ -161,8 +182,16 @@ function BiomechanicsCard({
           <ThemedText type="body" style={styles.biomechanicsLabel}>
             {label}
           </ThemedText>
-          <View style={[styles.statusBadge, { backgroundColor: statusColor + "20" }]}>
-            <ThemedText type="small" style={[styles.statusText, { color: statusColor }]}>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: statusColor + "20" },
+            ]}
+          >
+            <ThemedText
+              type="small"
+              style={[styles.statusText, { color: statusColor }]}
+            >
               {getStatusLabel()}
             </ThemedText>
           </View>
@@ -185,9 +214,14 @@ function BiomechanicsCard({
         </View>
       </View>
       {focusArea ? (
-        <View style={[styles.focusAreaContainer, { borderTopColor: theme.border }]}>
+        <View
+          style={[styles.focusAreaContainer, { borderTopColor: theme.border }]}
+        >
           <Feather name="target" size={12} color={statusColor} />
-          <ThemedText type="small" style={{ color: theme.textSecondary, marginLeft: Spacing.xs }}>
+          <ThemedText
+            type="small"
+            style={{ color: theme.textSecondary, marginLeft: Spacing.xs }}
+          >
             {focusArea}
           </ThemedText>
         </View>
@@ -203,7 +237,12 @@ interface InjuryAlertProps {
   prevention: string;
 }
 
-function InjuryAlert({ bodyPart, riskLevel, issue, prevention }: InjuryAlertProps) {
+function InjuryAlert({
+  bodyPart,
+  riskLevel,
+  issue,
+  prevention,
+}: InjuryAlertProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
 
@@ -239,20 +278,37 @@ function InjuryAlert({ bodyPart, riskLevel, issue, prevention }: InjuryAlertProp
     <Animated.View
       style={[
         styles.injuryAlertCard,
-        { backgroundColor: theme.backgroundDefault, borderLeftColor: riskColor },
+        {
+          backgroundColor: theme.backgroundDefault,
+          borderLeftColor: riskColor,
+        },
         animatedStyle,
       ]}
     >
       <View style={styles.injuryAlertHeader}>
-        <View style={[styles.injuryAlertIcon, { backgroundColor: riskColor + "20" }]}>
+        <View
+          style={[
+            styles.injuryAlertIcon,
+            { backgroundColor: riskColor + "20" },
+          ]}
+        >
           <Feather name={getRiskIcon()} size={18} color={riskColor} />
         </View>
         <View style={styles.injuryAlertHeaderText}>
           <ThemedText type="body" style={{ fontWeight: "600" }}>
             {bodyPart}
           </ThemedText>
-          <View style={[styles.riskBadge, { backgroundColor: riskColor + "20" }]}>
-            <ThemedText type="small" style={{ color: riskColor, fontWeight: "600", textTransform: "uppercase" }}>
+          <View
+            style={[styles.riskBadge, { backgroundColor: riskColor + "20" }]}
+          >
+            <ThemedText
+              type="small"
+              style={{
+                color: riskColor,
+                fontWeight: "600",
+                textTransform: "uppercase",
+              }}
+            >
               {riskLevel} Risk
             </ThemedText>
           </View>
@@ -262,9 +318,17 @@ function InjuryAlert({ bodyPart, riskLevel, issue, prevention }: InjuryAlertProp
         <ThemedText type="small" style={{ color: theme.textSecondary }}>
           {issue}
         </ThemedText>
-        <View style={[styles.preventionTip, { backgroundColor: theme.success + "10" }]}>
+        <View
+          style={[
+            styles.preventionTip,
+            { backgroundColor: theme.success + "10" },
+          ]}
+        >
           <Feather name="shield" size={14} color={theme.success} />
-          <ThemedText type="small" style={{ color: theme.success, marginLeft: Spacing.xs, flex: 1 }}>
+          <ThemedText
+            type="small"
+            style={{ color: theme.success, marginLeft: Spacing.xs, flex: 1 }}
+          >
             {prevention}
           </ThemedText>
         </View>
@@ -341,13 +405,19 @@ function FeedbackCard({
       ]}
     >
       <View style={styles.feedbackHeader}>
-        <View style={[styles.priorityDot, { backgroundColor: getPriorityColor() }]} />
+        <View
+          style={[styles.priorityDot, { backgroundColor: getPriorityColor() }]}
+        />
         <View style={styles.feedbackTitleContainer}>
           <ThemedText type="body" style={styles.feedbackTitle}>
             {title}
           </ThemedText>
           {!expanded ? (
-            <ThemedText type="small" style={{ color: theme.textSecondary }} numberOfLines={1}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.textSecondary }}
+              numberOfLines={1}
+            >
               {shortDescription}
             </ThemedText>
           ) : null}
@@ -357,23 +427,43 @@ function FeedbackCard({
         </Animated.View>
       </View>
       {expanded ? (
-        <Animated.View entering={FadeIn.duration(200)} style={styles.feedbackContent}>
-          <ThemedText type="small" style={{ color: theme.textSecondary, lineHeight: 20 }}>
+        <Animated.View
+          entering={FadeIn.duration(200)}
+          style={styles.feedbackContent}
+        >
+          <ThemedText
+            type="small"
+            style={{ color: theme.textSecondary, lineHeight: 20 }}
+          >
             {fullDescription}
           </ThemedText>
           {linkedDrill ? (
             <Pressable
               onPress={onDrillPress}
-              style={[styles.linkedDrill, { backgroundColor: theme.primary + "10" }]}
+              style={[
+                styles.linkedDrill,
+                { backgroundColor: theme.primary + "10" },
+              ]}
             >
-              <View style={[styles.linkedDrillIcon, { backgroundColor: theme.primary + "20" }]}>
+              <View
+                style={[
+                  styles.linkedDrillIcon,
+                  { backgroundColor: theme.primary + "20" },
+                ]}
+              >
                 <Feather name="play-circle" size={16} color={theme.primary} />
               </View>
               <View style={styles.linkedDrillInfo}>
-                <ThemedText type="small" style={{ fontWeight: "600", color: theme.primary }}>
+                <ThemedText
+                  type="small"
+                  style={{ fontWeight: "600", color: theme.primary }}
+                >
                   {linkedDrill.name}
                 </ThemedText>
-                <ThemedText type="small" style={{ color: theme.textSecondary, fontSize: 11 }}>
+                <ThemedText
+                  type="small"
+                  style={{ color: theme.textSecondary, fontSize: 11 }}
+                >
                   {linkedDrill.duration} - Recommended Drill
                 </ThemedText>
               </View>
@@ -389,10 +479,34 @@ function FeedbackCard({
 const PLAYBACK_SPEEDS = ["1x", "0.5x", "0.25x"];
 
 const MOCK_STILL_IMAGES = [
-  { id: "1", timestamp: "0:02", label: "Setup Position", description: "Initial stance", isKeyPoint: false },
-  { id: "2", timestamp: "0:05", label: "Load Phase", description: "Weight transfer", isKeyPoint: true },
-  { id: "3", timestamp: "0:08", label: "Release Point", description: "Arm extension", isKeyPoint: true },
-  { id: "4", timestamp: "0:11", label: "Follow Through", description: "Completion", isKeyPoint: false },
+  {
+    id: "1",
+    timestamp: "0:02",
+    label: "Setup Position",
+    description: "Initial stance",
+    isKeyPoint: false,
+  },
+  {
+    id: "2",
+    timestamp: "0:05",
+    label: "Load Phase",
+    description: "Weight transfer",
+    isKeyPoint: true,
+  },
+  {
+    id: "3",
+    timestamp: "0:08",
+    label: "Release Point",
+    description: "Arm extension",
+    isKeyPoint: true,
+  },
+  {
+    id: "4",
+    timestamp: "0:11",
+    label: "Follow Through",
+    description: "Completion",
+    isKeyPoint: false,
+  },
 ];
 
 const MOCK_BIOMECHANICS = [
@@ -461,11 +575,31 @@ const MOCK_FEEDBACK = [
 ];
 
 const MOCK_RELATED_DRILLS = [
-  { id: "1", name: "Mirror Alignment Drill", duration: "5 min", focus: "Shoulder", hasVideo: true, hasDiagram: true },
-  { id: "2", name: "Wall Squat Holds", duration: "8 min", focus: "Knee Flexion", hasVideo: true, hasDiagram: false },
-  { id: "3", name: "Resistance Band Rotation", duration: "6 min", focus: "Hip Power", hasVideo: true, hasDiagram: true },
+  {
+    id: "1",
+    name: "Mirror Alignment Drill",
+    duration: "5 min",
+    focus: "Shoulder",
+    hasVideo: true,
+    hasDiagram: true,
+  },
+  {
+    id: "2",
+    name: "Wall Squat Holds",
+    duration: "8 min",
+    focus: "Knee Flexion",
+    hasVideo: true,
+    hasDiagram: false,
+  },
+  {
+    id: "3",
+    name: "Resistance Band Rotation",
+    duration: "6 min",
+    focus: "Hip Power",
+    hasVideo: true,
+    hasDiagram: true,
+  },
 ];
-
 
 export default function AnalysisResultScreen({
   route,
@@ -474,11 +608,13 @@ export default function AnalysisResultScreen({
   const { theme } = useTheme();
   const [selectedSpeed, setSelectedSpeed] = useState("1x");
   const [expandedFeedback, setExpandedFeedback] = useState<string | null>("1");
-  const [selectedStillImage, setSelectedStillImage] = useState<string | null>(null);
+  const [selectedStillImage, setSelectedStillImage] = useState<string | null>(
+    null,
+  );
   const { getAnalysis, getVideo } = useVideos();
 
   const rootNavigation = useRootNavigation<NavigationProp<ParamListBase>>();
-  
+
   const analysisId = route.params?.analysisId;
   const videoId = route.params?.videoId;
   const analysis = analysisId ? getAnalysis(analysisId) : undefined;
@@ -488,15 +624,20 @@ export default function AnalysisResultScreen({
   const keyFrames = analysis?.keyFrames ?? MOCK_STILL_IMAGES;
   const biomechanics = analysis?.biomechanics ?? MOCK_BIOMECHANICS;
   const feedback = analysis?.feedback ?? MOCK_FEEDBACK;
-  const recommendedDrills = analysis?.recommendedDrills?.map((d, i) => ({
-    ...d,
-    hasVideo: true,
-    hasDiagram: i % 2 === 0,
-  })) ?? MOCK_RELATED_DRILLS;
+  const recommendedDrills =
+    analysis?.recommendedDrills?.map((d, i) => ({
+      ...d,
+      hasVideo: true,
+      hasDiagram: i % 2 === 0,
+    })) ?? MOCK_RELATED_DRILLS;
 
   const injuryAlerts = analysis?.injuryAlerts ?? [];
-  const hasInjuryRisks = injuryAlerts.length > 0 && injuryAlerts.some(alert => alert.riskLevel === "high" || alert.riskLevel === "moderate");
-  
+  const hasInjuryRisks =
+    injuryAlerts.length > 0 &&
+    injuryAlerts.some(
+      (alert) => alert.riskLevel === "high" || alert.riskLevel === "moderate",
+    );
+
   const handleVideoPress = () => {
     if (video?.uri) {
       rootNavigation.navigate("VideoPlayback", {
@@ -508,7 +649,11 @@ export default function AnalysisResultScreen({
     }
   };
 
-  const handleDrillPress = (drillId: string, drillName: string, focus?: string) => {
+  const handleDrillPress = (
+    drillId: string,
+    drillName: string,
+    focus?: string,
+  ) => {
     navigation.navigate("DrillDetail", {
       drillId,
       title: drillName,
@@ -535,11 +680,17 @@ export default function AnalysisResultScreen({
         <View style={styles.videoPlaceholder}>
           <Feather name="play-circle" size={48} color={theme.primary} />
           {video?.uri ? (
-            <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.sm }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.textSecondary, marginTop: Spacing.sm }}
+            >
               Tap to play video
             </ThemedText>
           ) : (
-            <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.sm }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.textSecondary, marginTop: Spacing.sm }}
+            >
               Video unavailable
             </ThemedText>
           )}
@@ -562,8 +713,15 @@ export default function AnalysisResultScreen({
 
       <View style={styles.playbackControls}>
         <View style={styles.scrubber}>
-          <View style={[styles.scrubberProgress, { backgroundColor: theme.primary }]} />
-          <View style={[styles.scrubberThumb, { backgroundColor: theme.primary }]} />
+          <View
+            style={[
+              styles.scrubberProgress,
+              { backgroundColor: theme.primary },
+            ]}
+          />
+          <View
+            style={[styles.scrubberThumb, { backgroundColor: theme.primary }]}
+          />
         </View>
         <View style={styles.speedControls}>
           {PLAYBACK_SPEEDS.map((speed) => (
@@ -597,12 +755,20 @@ export default function AnalysisResultScreen({
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">Form Analysis</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Body position visualization with areas of focus
       </ThemedText>
       <Spacer height={Spacing.md} />
 
-      <View style={[styles.skeletonContainer, { backgroundColor: theme.backgroundDefault }]}>
+      <View
+        style={[
+          styles.skeletonContainer,
+          { backgroundColor: theme.backgroundDefault },
+        ]}
+      >
         <SkeletonOverlay
           width={180}
           height={250}
@@ -611,7 +777,9 @@ export default function AnalysisResultScreen({
         />
         <View style={styles.skeletonLegend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: theme.success }]} />
+            <View
+              style={[styles.legendDot, { backgroundColor: theme.success }]}
+            />
             <ThemedText type="small">Excellent Form</ThemedText>
           </View>
           <View style={styles.legendItem}>
@@ -629,26 +797,38 @@ export default function AnalysisResultScreen({
 
       {hasInjuryRisks ? (
         <>
-          <View style={[styles.injurySectionHeader, { backgroundColor: "#FF444410" }]}>
+          <View
+            style={[
+              styles.injurySectionHeader,
+              { backgroundColor: "#FF444410" },
+            ]}
+          >
             <Feather name="alert-triangle" size={20} color="#FF4444" />
-            <ThemedText type="h4" style={{ marginLeft: Spacing.sm }}>Injury Prevention Alerts</ThemedText>
+            <ThemedText type="h4" style={{ marginLeft: Spacing.sm }}>
+              Injury Prevention Alerts
+            </ThemedText>
           </View>
-          <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+          <ThemedText
+            type="small"
+            style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+          >
             Form patterns that may increase injury risk
           </ThemedText>
           <Spacer height={Spacing.md} />
 
-          {injuryAlerts.filter(a => a.riskLevel !== "low").map((alert) => (
-            <React.Fragment key={alert.id}>
-              <InjuryAlert
-                bodyPart={alert.bodyPart}
-                riskLevel={alert.riskLevel}
-                issue={alert.issue}
-                prevention={alert.prevention}
-              />
-              <Spacer height={Spacing.sm} />
-            </React.Fragment>
-          ))}
+          {injuryAlerts
+            .filter((a) => a.riskLevel !== "low")
+            .map((alert) => (
+              <React.Fragment key={alert.id}>
+                <InjuryAlert
+                  bodyPart={alert.bodyPart}
+                  riskLevel={alert.riskLevel}
+                  issue={alert.issue}
+                  prevention={alert.prevention}
+                />
+                <Spacer height={Spacing.sm} />
+              </React.Fragment>
+            ))}
 
           <Spacer height={Spacing["2xl"]} />
         </>
@@ -657,7 +837,9 @@ export default function AnalysisResultScreen({
       <View style={styles.sectionHeader}>
         <ThemedText type="h4">Key Frames</ThemedText>
         <View style={styles.keyPointLegend}>
-          <View style={[styles.keyPointIndicator, { borderColor: theme.warning }]} />
+          <View
+            style={[styles.keyPointIndicator, { borderColor: theme.warning }]}
+          />
           <ThemedText type="small" style={{ color: theme.textSecondary }}>
             Focus Area
           </ThemedText>
@@ -676,7 +858,7 @@ export default function AnalysisResultScreen({
             timestamp={image.timestamp}
             label={image.label}
             description={image.description}
-            isKeyPoint={image.isKeyPoint}
+            isKeyPoint={image.isKeyPoint || selectedStillImage === image.id}
             onPress={() => setSelectedStillImage(image.id)}
           />
         ))}
@@ -685,7 +867,10 @@ export default function AnalysisResultScreen({
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">Biomechanics Analysis</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Areas of exposure, weakness, and focus
       </ThemedText>
       <Spacer height={Spacing.md} />
@@ -711,7 +896,10 @@ export default function AnalysisResultScreen({
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">Coaching Feedback</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Tap to expand for details and linked drills
       </ThemedText>
       <Spacer height={Spacing.md} />
@@ -726,13 +914,15 @@ export default function AnalysisResultScreen({
             expanded={expandedFeedback === item.id}
             linkedDrill={item.linkedDrill || undefined}
             onToggle={() =>
-              setExpandedFeedback(
-                expandedFeedback === item.id ? null : item.id
-              )
+              setExpandedFeedback(expandedFeedback === item.id ? null : item.id)
             }
             onDrillPress={() => {
               if (item.linkedDrill) {
-                handleDrillPress(`drill-${item.id}`, item.linkedDrill.name, item.title);
+                handleDrillPress(
+                  `drill-${item.id}`,
+                  item.linkedDrill.name,
+                  item.title,
+                );
               }
             }}
           />
@@ -743,7 +933,10 @@ export default function AnalysisResultScreen({
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">Recommended Drills</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Based on your analysis, with videos and diagrams
       </ThemedText>
       <Spacer height={Spacing.md} />
@@ -753,12 +946,17 @@ export default function AnalysisResultScreen({
           <Pressable
             onPress={() => handleDrillPress(drill.id, drill.name, drill.focus)}
             style={({ pressed }) => [
-              styles.relatedDrill, 
+              styles.relatedDrill,
               { backgroundColor: theme.backgroundDefault },
               pressed && { opacity: 0.7 },
             ]}
           >
-            <View style={[styles.drillThumbnail, { backgroundColor: theme.backgroundSecondary }]}>
+            <View
+              style={[
+                styles.drillThumbnail,
+                { backgroundColor: theme.backgroundSecondary },
+              ]}
+            >
               <Feather name="play-circle" size={20} color={theme.primary} />
             </View>
             <View style={styles.drillInfo}>
@@ -770,24 +968,44 @@ export default function AnalysisResultScreen({
               </ThemedText>
               <View style={styles.drillBadges}>
                 {drill.hasVideo ? (
-                  <View style={[styles.drillBadge, { backgroundColor: theme.primary + "15" }]}>
+                  <View
+                    style={[
+                      styles.drillBadge,
+                      { backgroundColor: theme.primary + "15" },
+                    ]}
+                  >
                     <Feather name="video" size={10} color={theme.primary} />
-                    <ThemedText type="small" style={[styles.badgeText, { color: theme.primary }]}>
+                    <ThemedText
+                      type="small"
+                      style={[styles.badgeText, { color: theme.primary }]}
+                    >
                       Video
                     </ThemedText>
                   </View>
                 ) : null}
                 {drill.hasDiagram ? (
-                  <View style={[styles.drillBadge, { backgroundColor: theme.success + "15" }]}>
+                  <View
+                    style={[
+                      styles.drillBadge,
+                      { backgroundColor: theme.success + "15" },
+                    ]}
+                  >
                     <Feather name="image" size={10} color={theme.success} />
-                    <ThemedText type="small" style={[styles.badgeText, { color: theme.success }]}>
+                    <ThemedText
+                      type="small"
+                      style={[styles.badgeText, { color: theme.success }]}
+                    >
                       Diagram
                     </ThemedText>
                   </View>
                 ) : null}
               </View>
             </View>
-            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+            <Feather
+              name="chevron-right"
+              size={20}
+              color={theme.textSecondary}
+            />
           </Pressable>
           <Spacer height={Spacing.sm} />
         </React.Fragment>

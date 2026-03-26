@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View, Pressable } from "react-native";
 import Animated, {
@@ -67,6 +68,19 @@ function EmptyScreen() {
   return null;
 }
 
+function RecordTabButton({ color }: { color: string }) {
+  const navigation = useNavigation<any>();
+
+  return (
+    <View style={styles.recordTabButton}>
+      <RecordButton
+        onPress={() => navigation.navigate("RecordModal")}
+        color={color}
+      />
+    </View>
+  );
+}
+
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
 
@@ -127,18 +141,7 @@ export default function MainTabNavigator() {
         options={{
           title: "",
           tabBarIcon: () => null,
-          tabBarButton: () => {
-            const navigation =
-              require("@react-navigation/native").useNavigation();
-            return (
-              <View style={styles.recordTabButton}>
-                <RecordButton
-                  onPress={() => navigation.navigate("RecordModal")}
-                  color={theme.primary}
-                />
-              </View>
-            );
-          },
+          tabBarButton: () => <RecordTabButton color={theme.primary} />,
         }}
       />
       <Tab.Screen

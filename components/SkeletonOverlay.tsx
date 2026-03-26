@@ -1,8 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Svg, { Circle, Line, G } from "react-native-svg";
-import { BiomechanicsMetric } from "../services/AnalysisService";
-import { Colors, Spacing } from "../constants/theme";
+import { BiomechanicsMetric } from "@/services/AnalysisService";
+import { Colors } from "../constants/theme";
 
 interface JointPosition {
   x: number;
@@ -17,7 +17,9 @@ interface SkeletonOverlayProps {
   animated?: boolean;
 }
 
-const getStatusColor = (status: "good" | "warning" | "needs_work" | "neutral"): string => {
+const getStatusColor = (
+  status: "good" | "warning" | "needs_work" | "neutral",
+): string => {
   switch (status) {
     case "good":
       return Colors.light.success;
@@ -34,10 +36,10 @@ const getStatusColor = (status: "good" | "warning" | "needs_work" | "neutral"): 
 
 const getJointStatus = (
   jointName: string,
-  biomechanics?: BiomechanicsMetric[]
+  biomechanics?: BiomechanicsMetric[],
 ): "good" | "warning" | "needs_work" | "neutral" => {
   if (!biomechanics || biomechanics.length === 0) return "neutral";
-  
+
   const jointMappings: Record<string, string[]> = {
     head: ["head", "neck", "posture"],
     shoulder_left: ["shoulder", "arm", "upper body"],
@@ -56,18 +58,18 @@ const getJointStatus = (
   };
 
   const keywords = jointMappings[jointName] || [];
-  
+
   for (const metric of biomechanics) {
     const labelLower = metric.label.toLowerCase();
     const focusLower = metric.focusArea?.toLowerCase() || "";
-    
+
     for (const keyword of keywords) {
       if (labelLower.includes(keyword) || focusLower.includes(keyword)) {
         return metric.status;
       }
     }
   }
-  
+
   return "neutral";
 };
 
@@ -195,15 +197,18 @@ export const SkeletonOverlay: React.FC<SkeletonOverlayProps> = ({
   const scaleX = width / 200;
   const scaleY = height / 280;
 
-  const scaledPose = Object.entries(pose).reduce((acc, [key, pos]) => {
-    acc[key] = { x: pos.x * scaleX, y: pos.y * scaleY };
-    return acc;
-  }, {} as Record<string, JointPosition>);
+  const scaledPose = Object.entries(pose).reduce(
+    (acc, [key, pos]) => {
+      acc[key] = { x: pos.x * scaleX, y: pos.y * scaleY };
+      return acc;
+    },
+    {} as Record<string, JointPosition>,
+  );
 
   const getBoneColor = (joint1: string, joint2: string): string => {
     const status1 = getJointStatus(joint1, biomechanics);
     const status2 = getJointStatus(joint2, biomechanics);
-    
+
     if (status1 === "needs_work" || status2 === "needs_work") {
       return getStatusColor("needs_work");
     }
@@ -224,7 +229,7 @@ export const SkeletonOverlay: React.FC<SkeletonOverlayProps> = ({
             const pos1 = scaledPose[joint1];
             const pos2 = scaledPose[joint2];
             if (!pos1 || !pos2) return null;
-            
+
             return (
               <Line
                 key={`bone-${index}`}
@@ -238,18 +243,22 @@ export const SkeletonOverlay: React.FC<SkeletonOverlayProps> = ({
               />
             );
           })}
-          
+
           {Object.entries(scaledPose).map(([jointName, pos]) => {
             const status = getJointStatus(jointName, biomechanics);
             const color = getStatusColor(status);
             const isHead = jointName === "head";
-            
+
             return (
               <Circle
                 key={jointName}
                 cx={pos.x}
                 cy={pos.y}
-                r={isHead ? 12 * Math.min(scaleX, scaleY) : 6 * Math.min(scaleX, scaleY)}
+                r={
+                  isHead
+                    ? 12 * Math.min(scaleX, scaleY)
+                    : 6 * Math.min(scaleX, scaleY)
+                }
                 fill={color}
                 stroke="#FFFFFF"
                 strokeWidth={2}

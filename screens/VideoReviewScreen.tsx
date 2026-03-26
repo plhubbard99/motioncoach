@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Pressable, FlatList, Platform, Alert, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Pressable,
+  FlatList,
+  Platform,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Animated, {
@@ -12,8 +20,12 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
 import Spacer from "@/components/Spacer";
-import { useVideos, RecordedVideo } from "@/contexts/VideoContext";
-import { extractFrames, analyzeVideo, hasApiKey, AnalysisResult } from "@/services/AnalysisService";
+import { useVideos } from "@/contexts/VideoContext";
+import {
+  extractFrames,
+  analyzeVideo,
+  hasApiKey,
+} from "@/services/AnalysisService";
 
 type VideoReviewStackParamList = {
   VideoReview: undefined;
@@ -27,7 +39,10 @@ type VideoReviewStackParamList = {
 };
 
 type VideoReviewScreenProps = {
-  navigation: NativeStackNavigationProp<VideoReviewStackParamList, "VideoReview">;
+  navigation: NativeStackNavigationProp<
+    VideoReviewStackParamList,
+    "VideoReview"
+  >;
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -46,7 +61,17 @@ interface VideoItemProps {
   onViewAnalysis: () => void;
 }
 
-function VideoItem({ title, date, duration, sport, isAnalyzed, isAnalyzing, onPress, onAnalyze, onViewAnalysis }: VideoItemProps) {
+function VideoItem({
+  title,
+  date,
+  duration,
+  sport,
+  isAnalyzed,
+  isAnalyzing,
+  onPress,
+  onAnalyze,
+  onViewAnalysis,
+}: VideoItemProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
 
@@ -69,9 +94,16 @@ function VideoItem({ title, date, duration, sport, isAnalyzed, isAnalyzing, onPr
         animatedStyle,
       ]}
     >
-      <View style={[styles.videoThumbnail, { backgroundColor: theme.backgroundSecondary }]}>
+      <View
+        style={[
+          styles.videoThumbnail,
+          { backgroundColor: theme.backgroundSecondary },
+        ]}
+      >
         <Feather name="play" size={24} color={theme.primary} />
-        <View style={[styles.durationBadge, { backgroundColor: "rgba(0,0,0,0.7)" }]}>
+        <View
+          style={[styles.durationBadge, { backgroundColor: "rgba(0,0,0,0.7)" }]}
+        >
           <ThemedText type="small" style={styles.durationText}>
             {duration}
           </ThemedText>
@@ -81,24 +113,45 @@ function VideoItem({ title, date, duration, sport, isAnalyzed, isAnalyzing, onPr
         <ThemedText type="body" style={styles.videoTitle} numberOfLines={1}>
           {title}
         </ThemedText>
-        <ThemedText type="small" style={[styles.videoMeta, { color: theme.textSecondary }]}>
+        <ThemedText
+          type="small"
+          style={[styles.videoMeta, { color: theme.textSecondary }]}
+        >
           {sport} - {date}
         </ThemedText>
         <View style={styles.statusRow}>
           {isAnalyzing ? (
-            <View style={[styles.statusBadge, { backgroundColor: theme.primary + "20" }]}>
-              <ActivityIndicator size="small" color={theme.primary} style={{ marginRight: 4 }} />
-              <ThemedText type="small" style={[styles.statusText, { color: theme.primary }]}>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: theme.primary + "20" },
+              ]}
+            >
+              <ActivityIndicator
+                size="small"
+                color={theme.primary}
+                style={{ marginRight: 4 }}
+              />
+              <ThemedText
+                type="small"
+                style={[styles.statusText, { color: theme.primary }]}
+              >
                 Analyzing...
               </ThemedText>
             </View>
           ) : isAnalyzed ? (
             <Pressable
               onPress={onViewAnalysis}
-              style={[styles.statusBadge, { backgroundColor: theme.success + "20" }]}
+              style={[
+                styles.statusBadge,
+                { backgroundColor: theme.success + "20" },
+              ]}
             >
               <Feather name="check-circle" size={12} color={theme.success} />
-              <ThemedText type="small" style={[styles.statusText, { color: theme.success }]}>
+              <ThemedText
+                type="small"
+                style={[styles.statusText, { color: theme.success }]}
+              >
                 View Analysis
               </ThemedText>
             </Pressable>
@@ -141,17 +194,40 @@ interface VideoDisplayItem {
 }
 
 const SAMPLE_VIDEOS: VideoDisplayItem[] = [
-  { id: "sample_1", title: "Morning Practice Session", date: "Today", duration: "2:34", sport: "Basketball", isAnalyzed: true },
-  { id: "sample_2", title: "Swing Analysis Recording", date: "Yesterday", duration: "1:45", sport: "Golf", isAnalyzed: true },
-  { id: "sample_3", title: "Pitching Practice", date: "Dec 28", duration: "3:12", sport: "Softball", isAnalyzed: false },
+  {
+    id: "sample_1",
+    title: "Morning Practice Session",
+    date: "Today",
+    duration: "2:34",
+    sport: "Basketball",
+    isAnalyzed: true,
+  },
+  {
+    id: "sample_2",
+    title: "Swing Analysis Recording",
+    date: "Yesterday",
+    duration: "1:45",
+    sport: "Golf",
+    isAnalyzed: true,
+  },
+  {
+    id: "sample_3",
+    title: "Pitching Practice",
+    date: "Dec 28",
+    duration: "3:12",
+    sport: "Softball",
+    isAnalyzed: false,
+  },
 ];
 
-export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps) {
+export default function VideoReviewScreen({
+  navigation,
+}: VideoReviewScreenProps) {
   const { theme } = useTheme();
   const { paddingTop, paddingBottom } = useScreenInsets();
   const [filter, setFilter] = useState<FilterType>("all");
   const [analyzingIds, setAnalyzingIds] = useState<Set<string>>(new Set());
-  const { videos, markAsAnalyzed, getAnalysis } = useVideos();
+  const { videos, markAsAnalyzed } = useVideos();
 
   const recordedVideos: VideoDisplayItem[] = videos.map((v) => ({
     id: v.id,
@@ -180,10 +256,16 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
     return 60000;
   };
 
-  const showAlert = (title: string, message: string, buttons?: { text: string; onPress?: () => void }[]) => {
+  const showAlert = (
+    title: string,
+    message: string,
+    buttons?: { text: string; onPress?: () => void }[],
+  ) => {
     if (Platform.OS === "web") {
       if (buttons && buttons.length > 1) {
-        const confirmed = window.confirm(`${title}\n\n${message}\n\nClick OK to ${buttons[1].text}`);
+        const confirmed = window.confirm(
+          `${title}\n\n${message}\n\nClick OK to ${buttons[1].text}`,
+        );
         if (confirmed && buttons[1].onPress) {
           buttons[1].onPress();
         }
@@ -199,7 +281,7 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
     if (Platform.OS === "web") {
       showAlert(
         "Feature Unavailable",
-        "Video analysis requires Expo Go on a mobile device. Please scan the QR code to test this feature."
+        "Video analysis requires Expo Go on a mobile device. Please scan the QR code to test this feature.",
       );
       return;
     }
@@ -214,10 +296,12 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
           {
             text: "Go to Settings",
             onPress: () => {
-              navigation.getParent()?.navigate("ProfileTab", { screen: "Settings" });
+              navigation
+                .getParent()
+                ?.navigate("ProfileTab", { screen: "Settings" });
             },
           },
-        ]
+        ],
       );
       return;
     }
@@ -242,10 +326,11 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
 
       showAlert(
         "Analysis Complete",
-        `Your ${video.sport} form scored ${result.overallScore}/100. Tap "View Analysis" to see detailed feedback.`
+        `Your ${video.sport} form scored ${result.overallScore}/100. Tap "View Analysis" to see detailed feedback.`,
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Analysis failed";
+      const message =
+        error instanceof Error ? error.message : "Analysis failed";
       showAlert("Analysis Failed", message);
     } finally {
       setAnalyzingIds((prev) => {
@@ -260,13 +345,20 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
     navigation.navigate("AnalysisResult", { analysisId: videoId, videoId });
   };
 
-  const FilterButton = ({ type, label }: { type: FilterType; label: string }) => (
+  const FilterButton = ({
+    type,
+    label,
+  }: {
+    type: FilterType;
+    label: string;
+  }) => (
     <Pressable
       onPress={() => setFilter(type)}
       style={[
         styles.filterButton,
         {
-          backgroundColor: filter === type ? theme.primary : theme.backgroundSecondary,
+          backgroundColor:
+            filter === type ? theme.primary : theme.backgroundSecondary,
         },
       ]}
     >
@@ -322,11 +414,17 @@ export default function VideoReviewScreen({ navigation }: VideoReviewScreenProps
           <View style={styles.emptyState}>
             <Feather name="video" size={48} color={theme.textSecondary} />
             <Spacer height={Spacing.md} />
-            <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: "center" }}>
+            <ThemedText
+              type="body"
+              style={{ color: theme.textSecondary, textAlign: "center" }}
+            >
               No videos yet
             </ThemedText>
             <Spacer height={Spacing.sm} />
-            <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.textSecondary, textAlign: "center" }}
+            >
               Tap the record button to capture your first training session
             </ThemedText>
           </View>

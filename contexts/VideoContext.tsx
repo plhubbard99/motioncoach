@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AnalysisResult } from "@/services/AnalysisService";
 
@@ -67,7 +73,10 @@ export function VideoProvider({ children }: { children: ReactNode }) {
 
   const saveAnalyses = async (newAnalyses: Record<string, AnalysisResult>) => {
     try {
-      await AsyncStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(newAnalyses));
+      await AsyncStorage.setItem(
+        ANALYSIS_STORAGE_KEY,
+        JSON.stringify(newAnalyses),
+      );
     } catch (error) {
       console.log("Error saving analyses:", error);
     }
@@ -97,7 +106,9 @@ export function VideoProvider({ children }: { children: ReactNode }) {
   };
 
   const markAsAnalyzed = (id: string, result: AnalysisResult) => {
-    const newVideos = videos.map((v) => (v.id === id ? { ...v, isAnalyzed: true } : v));
+    const newVideos = videos.map((v) =>
+      v.id === id ? { ...v, isAnalyzed: true } : v,
+    );
     setVideos(newVideos);
     saveVideos(newVideos);
     const newAnalyses = { ...analyses, [id]: result };
@@ -115,7 +126,16 @@ export function VideoProvider({ children }: { children: ReactNode }) {
 
   return (
     <VideoContext.Provider
-      value={{ videos, analyses, addVideo, removeVideo, markAsAnalyzed, getVideo, getAnalysis, isLoading }}
+      value={{
+        videos,
+        analyses,
+        addVideo,
+        removeVideo,
+        markAsAnalyzed,
+        getVideo,
+        getAnalysis,
+        isLoading,
+      }}
     >
       {children}
     </VideoContext.Provider>
