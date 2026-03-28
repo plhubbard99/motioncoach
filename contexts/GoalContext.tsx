@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GOALS_STORAGE_KEY = "pocket_coach_goals";
@@ -34,7 +41,9 @@ interface GoalProgress {
 interface GoalContextType {
   goals: Goal[];
   progressHistory: GoalProgress[];
-  addGoal: (goal: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">) => void;
+  addGoal: (
+    goal: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">,
+  ) => void;
   updateGoal: (id: string, updates: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
   recordProgress: (progress: Omit<GoalProgress, "recordedAt">) => void;
@@ -54,12 +63,6 @@ export function GoalProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) {
-      saveData();
-    }
-  }, [goals, progressHistory, isLoaded]);
-
   const loadData = async () => {
     try {
       const stored = await AsyncStorage.getItem(GOALS_STORAGE_KEY);
@@ -74,18 +77,26 @@ export function GoalProvider({ children }: { children: ReactNode }) {
     setIsLoaded(true);
   };
 
-  const saveData = async () => {
+  const saveData = useCallback(async () => {
     try {
       await AsyncStorage.setItem(
         GOALS_STORAGE_KEY,
-        JSON.stringify({ goals, progressHistory })
+        JSON.stringify({ goals, progressHistory }),
       );
     } catch (error) {
       console.error("Failed to save goals:", error);
     }
-  };
+  }, [goals, progressHistory]);
 
-  const addGoal = (goalData: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">) => {
+  useEffect(() => {
+    if (isLoaded) {
+      saveData();
+    }
+  }, [goals, progressHistory, isLoaded, saveData]);
+
+  const addGoal = (
+    goalData: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">,
+  ) => {
     const now = Date.now();
     const newGoal: Goal = {
       ...goalData,
@@ -100,10 +111,8 @@ export function GoalProvider({ children }: { children: ReactNode }) {
   const updateGoal = (id: string, updates: Partial<Goal>) => {
     setGoals((prev) =>
       prev.map((goal) =>
-        goal.id === id
-          ? { ...goal, ...updates, updatedAt: Date.now() }
-          : goal
-      )
+        goal.id === id ? { ...goal, ...updates, updatedAt: Date.now() } : goal,
+      ),
     );
   };
 
@@ -125,7 +134,7 @@ export function GoalProvider({ children }: { children: ReactNode }) {
       const updatedMilestones = goal.milestones.map((m) =>
         m.achievedAt === null && progress.value >= m.value
           ? { ...m, achievedAt: Date.now() }
-          : m
+          : m,
       );
 
       updateGoal(progress.goalId, {

@@ -34,7 +34,10 @@ function StatItem({ value, label }: StatItemProps) {
       <ThemedText type="h3" style={styles.statValue}>
         {value}
       </ThemedText>
-      <ThemedText type="small" style={[styles.statLabel, { color: theme.textSecondary }]}>
+      <ThemedText
+        type="small"
+        style={[styles.statLabel, { color: theme.textSecondary }]}
+      >
         {label}
       </ThemedText>
     </View>
@@ -85,17 +88,28 @@ function MenuItem({
       <View
         style={[
           styles.menuIconContainer,
-          { backgroundColor: danger ? theme.warning + "20" : theme.primary + "20" },
+          {
+            backgroundColor: danger
+              ? theme.warning + "20"
+              : theme.primary + "20",
+          },
         ]}
       >
-        <Feather name={icon} size={18} color={danger ? theme.warning : theme.primary} />
+        <Feather
+          name={icon}
+          size={18}
+          color={danger ? theme.warning : theme.primary}
+        />
       </View>
       <ThemedText type="body" style={[styles.menuLabel, { color }]}>
         {label}
       </ThemedText>
       {badge !== undefined && badge > 0 ? (
         <View style={[styles.badge, { backgroundColor: theme.primary }]}>
-          <ThemedText type="small" style={{ color: "#FFFFFF", fontSize: 11, fontWeight: "600" }}>
+          <ThemedText
+            type="small"
+            style={{ color: "#FFFFFF", fontSize: 11, fontWeight: "600" }}
+          >
             {badge}
           </ThemedText>
         </View>
@@ -122,7 +136,10 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const { theme } = useTheme();
   const [selectedAvatar, setSelectedAvatar] = useState(0);
   const [displayName] = useState("Athlete");
-  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>(["1", "3"]);
+  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>([
+    "1",
+    "3",
+  ]);
   const { goals } = useGoals();
   const { coaches } = useCoaches();
 
@@ -139,7 +156,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   return (
     <ScreenScrollView>
       <View style={styles.profileHeader}>
-        <View style={[styles.avatarContainer, { backgroundColor: AVATAR_COLORS[selectedAvatar] }]}>
+        <View
+          style={[
+            styles.avatarContainer,
+            { backgroundColor: AVATAR_COLORS[selectedAvatar] },
+          ]}
+        >
           <Feather name="user" size={40} color="#FFFFFF" />
         </View>
         <Spacer height={Spacing.md} />
@@ -152,7 +174,9 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
 
       <Spacer height={Spacing["2xl"]} />
 
-      <View style={[styles.statsCard, { backgroundColor: theme.backgroundDefault }]}>
+      <View
+        style={[styles.statsCard, { backgroundColor: theme.backgroundDefault }]}
+      >
         <StatItem value="24" label="Total Analyses" />
         <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
         <StatItem value="+18%" label="Improvement" />
@@ -163,7 +187,10 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h4">Focus Areas</ThemedText>
-      <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+      <ThemedText
+        type="small"
+        style={{ color: theme.textSecondary, marginTop: Spacing.xs }}
+      >
         Select areas you want to prioritize
       </ThemedText>
       <Spacer height={Spacing.md} />
@@ -178,7 +205,9 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               style={[
                 styles.focusAreaChip,
                 {
-                  backgroundColor: isSelected ? theme.primary : theme.backgroundDefault,
+                  backgroundColor: isSelected
+                    ? theme.primary
+                    : theme.backgroundDefault,
                   borderColor: isSelected ? theme.primary : theme.border,
                 },
               ]}
@@ -199,7 +228,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
                 {area.name}
               </ThemedText>
               {isSelected ? (
-                <Feather name="check" size={14} color="#FFFFFF" style={{ marginLeft: Spacing.xs }} />
+                <Feather
+                  name="check"
+                  size={14}
+                  color="#FFFFFF"
+                  style={{ marginLeft: Spacing.xs }}
+                />
               ) : null}
             </Pressable>
           );
@@ -262,11 +296,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
         onPress={() => navigation.navigate("Settings")}
       />
       <Spacer height={Spacing.sm} />
-      <MenuItem
-        icon="help-circle"
-        label="Help & Support"
-        onPress={() => {}}
-      />
+      <MenuItem icon="help-circle" label="Help & Support" onPress={() => {}} />
 
       <Spacer height={Spacing["2xl"]} />
 

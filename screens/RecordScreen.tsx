@@ -10,7 +10,12 @@ import {
   Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation, useRoute, RouteProp, CommonActions } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+  CommonActions,
+} from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CameraView, useCameraPermissions, CameraType } from "expo-camera";
@@ -52,15 +57,51 @@ interface BodyHighlight {
 }
 
 const BODY_HIGHLIGHTS: BodyHighlight[] = [
-  { id: "shoulder", name: "Shoulder", position: { top: "25%", left: "30%" }, riskLevel: "medium" },
-  { id: "elbow", name: "Elbow", position: { top: "38%", left: "22%" }, riskLevel: "high" },
-  { id: "wrist", name: "Wrist", position: { top: "48%", left: "18%" }, riskLevel: "medium" },
-  { id: "knee", name: "Knee", position: { top: "62%", left: "42%" }, riskLevel: "high" },
-  { id: "ankle", name: "Ankle", position: { top: "82%", left: "40%" }, riskLevel: "medium" },
-  { id: "hip", name: "Hip", position: { top: "52%", left: "48%" }, riskLevel: "low" },
+  {
+    id: "shoulder",
+    name: "Shoulder",
+    position: { top: "25%", left: "30%" },
+    riskLevel: "medium",
+  },
+  {
+    id: "elbow",
+    name: "Elbow",
+    position: { top: "38%", left: "22%" },
+    riskLevel: "high",
+  },
+  {
+    id: "wrist",
+    name: "Wrist",
+    position: { top: "48%", left: "18%" },
+    riskLevel: "medium",
+  },
+  {
+    id: "knee",
+    name: "Knee",
+    position: { top: "62%", left: "42%" },
+    riskLevel: "high",
+  },
+  {
+    id: "ankle",
+    name: "Ankle",
+    position: { top: "82%", left: "40%" },
+    riskLevel: "medium",
+  },
+  {
+    id: "hip",
+    name: "Hip",
+    position: { top: "52%", left: "48%" },
+    riskLevel: "low",
+  },
 ];
 
-function InjuryHighlight({ highlight, visible }: { highlight: BodyHighlight; visible: boolean }) {
+function InjuryHighlight({
+  highlight,
+  visible,
+}: {
+  highlight: BodyHighlight;
+  visible: boolean;
+}) {
   const colors = {
     high: "#FF3B30",
     medium: "#FF9500",
@@ -75,13 +116,13 @@ function InjuryHighlight({ highlight, visible }: { highlight: BodyHighlight; vis
       pulseScale.value = withRepeat(
         withSequence(
           withTiming(1.3, { duration: 800 }),
-          withTiming(1, { duration: 800 })
+          withTiming(1, { duration: 800 }),
         ),
         -1,
-        true
+        true,
       );
     }
-  }, [visible]);
+  }, [visible]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],
@@ -95,7 +136,10 @@ function InjuryHighlight({ highlight, visible }: { highlight: BodyHighlight; vis
       exiting={FadeOut.duration(200)}
       style={[
         styles.injuryHighlight,
-        { top: highlight.position.top as any, left: highlight.position.left as any },
+        {
+          top: highlight.position.top as any,
+          left: highlight.position.left as any,
+        },
       ]}
     >
       <Animated.View
@@ -114,7 +158,8 @@ function InjuryHighlight({ highlight, visible }: { highlight: BodyHighlight; vis
 
 export default function RecordScreen() {
   const { theme } = useTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RecordModalParams, "RecordModal">>();
 
   const dismissModal = () => {
@@ -125,7 +170,7 @@ export default function RecordScreen() {
         CommonActions.reset({
           index: 0,
           routes: [{ name: "MainTabs" }],
-        })
+        }),
       );
     }
   };
@@ -145,15 +190,15 @@ export default function RecordScreen() {
   const [showGrid, setShowGrid] = useState(false);
   const [motionDetectionEnabled, setMotionDetectionEnabled] = useState(false);
   const [showInjuryPrevention, setShowInjuryPrevention] = useState(false);
-  const [motionDetected, setMotionDetected] = useState(false);
+  const [, setMotionDetected] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [, setIsSaving] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
   const recordButtonScale = useSharedValue(1);
   const recordingPulse = useSharedValue(1);
   const flipButtonRotation = useSharedValue(0);
-  
+
   const lastAcceleration = useRef<AccelerometerMeasurement | null>(null);
   const motionThreshold = 0.15; // Lower threshold for more sensitivity
   const [motionLevel, setMotionLevel] = useState(0);
@@ -169,33 +214,46 @@ export default function RecordScreen() {
 
   useEffect(() => {
     let subscription: { remove: () => void } | null = null;
-    
-    if (recordingState === "waiting_motion" && motionDetectionEnabled && Platform.OS !== "web") {
+
+    if (
+      recordingState === "waiting_motion" &&
+      motionDetectionEnabled &&
+      Platform.OS !== "web"
+    ) {
       Accelerometer.setUpdateInterval(50); // Faster updates for smoother detection
-      
-      subscription = Accelerometer.addListener((data: AccelerometerMeasurement) => {
-        if (lastAcceleration.current) {
-          const deltaX = Math.abs(data.x - lastAcceleration.current.x);
-          const deltaY = Math.abs(data.y - lastAcceleration.current.y);
-          const deltaZ = Math.abs(data.z - lastAcceleration.current.z);
-          const totalMovement = deltaX + deltaY + deltaZ;
-          
-          // Amplify motion level for better visual feedback
-          setMotionLevel(Math.min(totalMovement * 5, 1));
-          
-          if (totalMovement > motionThreshold) {
-            handleMotionDetected();
+
+      subscription = Accelerometer.addListener(
+        (data: AccelerometerMeasurement) => {
+          if (lastAcceleration.current) {
+            const deltaX = Math.abs(data.x - lastAcceleration.current.x);
+            const deltaY = Math.abs(data.y - lastAcceleration.current.y);
+            const deltaZ = Math.abs(data.z - lastAcceleration.current.z);
+            const totalMovement = deltaX + deltaY + deltaZ;
+
+            // Amplify motion level for better visual feedback
+            setMotionLevel(Math.min(totalMovement * 5, 1));
+
+            if (totalMovement > motionThreshold) {
+              handleMotionDetected();
+            }
           }
-        }
-        lastAcceleration.current = data;
-      });
-    } else if (recordingState === "waiting_motion" && motionDetectionEnabled && Platform.OS === "web") {
-      const motionTimer = setTimeout(() => {
-        handleMotionDetected();
-      }, 2000 + Math.random() * 2000);
+          lastAcceleration.current = data;
+        },
+      );
+    } else if (
+      recordingState === "waiting_motion" &&
+      motionDetectionEnabled &&
+      Platform.OS === "web"
+    ) {
+      const motionTimer = setTimeout(
+        () => {
+          handleMotionDetected();
+        },
+        2000 + Math.random() * 2000,
+      );
       return () => clearTimeout(motionTimer);
     }
-    
+
     return () => {
       if (subscription) {
         subscription.remove();
@@ -222,7 +280,7 @@ export default function RecordScreen() {
       startActualRecording();
     }
     return () => clearTimeout(timer);
-  }, [countdown, recordingState]);
+  }, [countdown, recordingState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startActualRecording = async () => {
     if (Platform.OS === "web" || !cameraRef.current) {
@@ -242,12 +300,14 @@ export default function RecordScreen() {
       const videoResult = await cameraRef.current.recordAsync({
         maxDuration: 60,
       });
-      
+
       if (videoResult && videoResult.uri) {
-        const elapsedSeconds = Math.floor((Date.now() - recordingStartTimeRef.current) / 1000);
+        const elapsedSeconds = Math.floor(
+          (Date.now() - recordingStartTimeRef.current) / 1000,
+        );
         const actualDuration = Math.max(elapsedSeconds, 1);
         saveRecordedVideo(videoResult.uri, actualDuration);
-        
+
         isRecordingRef.current = false;
         setRecordingState("idle");
         setRecordingTime(0);
@@ -257,7 +317,7 @@ export default function RecordScreen() {
         Alert.alert(
           "Video Saved",
           "Your recording has been saved. You can view it in the Video Review tab.",
-          [{ text: "OK", onPress: () => dismissModal() }]
+          [{ text: "OK", onPress: () => dismissModal() }],
         );
       }
     } catch (error) {
@@ -270,10 +330,16 @@ export default function RecordScreen() {
 
   const saveRecordedVideo = (uri: string, duration: number) => {
     const now = new Date();
-    const formattedDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const formattedDate = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
     const mins = Math.floor(duration / 60);
     const secs = duration % 60;
-    const durationStr = mins > 0 || secs > 0 ? `${mins}:${secs.toString().padStart(2, "0")}` : "0:01";
+    const durationStr =
+      mins > 0 || secs > 0
+        ? `${mins}:${secs.toString().padStart(2, "0")}`
+        : "0:01";
 
     addVideo({
       uri,
@@ -295,10 +361,10 @@ export default function RecordScreen() {
       recordingPulse.value = withRepeat(
         withSequence(
           withTiming(1.2, { duration: 500 }),
-          withTiming(1, { duration: 500 })
+          withTiming(1, { duration: 500 }),
         ),
         -1,
-        true
+        true,
       );
       timer = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
@@ -307,11 +373,15 @@ export default function RecordScreen() {
       recordingPulse.value = 1;
     }
     return () => clearInterval(timer);
-  }, [recordingState]);
+  }, [recordingState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     let stopTimer: NodeJS.Timeout;
-    if (recordingState === "recording" && motionDetectionEnabled && recordingTime > 5) {
+    if (
+      recordingState === "recording" &&
+      motionDetectionEnabled &&
+      recordingTime > 5
+    ) {
       const shouldStop = Math.random() > 0.7;
       if (shouldStop) {
         stopTimer = setTimeout(() => {
@@ -320,7 +390,7 @@ export default function RecordScreen() {
       }
     }
     return () => clearTimeout(stopTimer);
-  }, [recordingTime, motionDetectionEnabled, recordingState]);
+  }, [recordingTime, motionDetectionEnabled, recordingState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStartRecording = () => {
     if (recordingState === "idle") {
@@ -350,7 +420,6 @@ export default function RecordScreen() {
       return;
     }
 
-    const currentRecordingTime = recordingTime;
     setIsSaving(true);
 
     if (Platform.OS !== "web") {
@@ -360,13 +429,18 @@ export default function RecordScreen() {
     if (Platform.OS !== "web" && cameraRef.current) {
       try {
         cameraRef.current.stopRecording();
-      } catch (error) {
-        console.log("Stop recording error:", error);
+      } catch {
+        console.log("Stop recording error");
       }
     } else if (Platform.OS === "web") {
       const now = new Date();
-      const formattedDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      const elapsedSeconds = Math.floor((Date.now() - recordingStartTimeRef.current) / 1000);
+      const formattedDate = now.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const elapsedSeconds = Math.floor(
+        (Date.now() - recordingStartTimeRef.current) / 1000,
+      );
       const actualDuration = Math.max(elapsedSeconds, 1);
       const mins = Math.floor(actualDuration / 60);
       const secs = actualDuration % 60;
@@ -390,7 +464,7 @@ export default function RecordScreen() {
       Alert.alert(
         "Video Saved",
         "Your recording has been saved. You can view it in the Video Review tab.",
-        [{ text: "OK", onPress: () => dismissModal() }]
+        [{ text: "OK", onPress: () => dismissModal() }],
       );
       return;
     }
@@ -432,7 +506,9 @@ export default function RecordScreen() {
   const getRecordingHint = () => {
     switch (recordingState) {
       case "idle":
-        return motionDetectionEnabled ? "Tap to enable motion detection" : "Tap to start recording";
+        return motionDetectionEnabled
+          ? "Tap to enable motion detection"
+          : "Tap to start recording";
       case "waiting_motion":
         return "Waiting for motion...";
       case "countdown":
@@ -457,16 +533,17 @@ export default function RecordScreen() {
   }
 
   if (!permission.granted) {
-    const cannotAskAgain = permission.status === "denied" && !permission.canAskAgain;
-    
+    const cannotAskAgain =
+      permission.status === "denied" && !permission.canAskAgain;
+
     const handleOpenSettings = async () => {
       try {
         await Linking.openSettings();
-      } catch (error) {
+      } catch {
         // openSettings not supported on this platform
       }
     };
-    
+
     return (
       <View style={[styles.container, { backgroundColor: "#000" }]}>
         <Pressable
@@ -488,9 +565,17 @@ export default function RecordScreen() {
           {cannotAskAgain && Platform.OS !== "web" ? (
             <Pressable
               onPress={handleOpenSettings}
-              style={[styles.permissionButton, { backgroundColor: theme.primary }]}
+              style={[
+                styles.permissionButton,
+                { backgroundColor: theme.primary },
+              ]}
             >
-              <Feather name="settings" size={18} color="#FFFFFF" style={{ marginRight: Spacing.xs }} />
+              <Feather
+                name="settings"
+                size={18}
+                color="#FFFFFF"
+                style={{ marginRight: Spacing.xs }}
+              />
               <ThemedText type="body" style={styles.permissionButtonText}>
                 Open Settings
               </ThemedText>
@@ -498,7 +583,10 @@ export default function RecordScreen() {
           ) : !cannotAskAgain ? (
             <Pressable
               onPress={requestPermission}
-              style={[styles.permissionButton, { backgroundColor: theme.primary }]}
+              style={[
+                styles.permissionButton,
+                { backgroundColor: theme.primary },
+              ]}
             >
               <ThemedText type="body" style={styles.permissionButtonText}>
                 Enable Camera
@@ -521,7 +609,9 @@ export default function RecordScreen() {
   return (
     <View style={styles.container}>
       {Platform.OS === "web" ? (
-        <View style={[styles.cameraPlaceholder, { backgroundColor: "#1a1a1a" }]}>
+        <View
+          style={[styles.cameraPlaceholder, { backgroundColor: "#1a1a1a" }]}
+        >
           <Feather name="video" size={64} color="rgba(255,255,255,0.3)" />
           <ThemedText
             type="body"
@@ -572,7 +662,9 @@ export default function RecordScreen() {
         </View>
       ) : null}
 
-      <View style={[styles.topOverlay, { paddingTop: insets.top + Spacing.md }]}>
+      <View
+        style={[styles.topOverlay, { paddingTop: insets.top + Spacing.md }]}
+      >
         <Pressable
           onPress={() => dismissModal()}
           style={({ pressed }) => [
@@ -584,7 +676,9 @@ export default function RecordScreen() {
         </Pressable>
 
         {recordingState === "recording" ? (
-          <Animated.View style={[styles.recordingIndicator, recordingIndicatorStyle]}>
+          <Animated.View
+            style={[styles.recordingIndicator, recordingIndicatorStyle]}
+          >
             <View style={styles.recordingDot} />
             <Text style={styles.recordingTimeText}>
               {formatTime(recordingTime)}
@@ -608,7 +702,11 @@ export default function RecordScreen() {
               { opacity: pressed ? 0.6 : 1 },
             ]}
           >
-            <Feather name="settings" size={24} color={showSettings ? theme.primary : "#FFFFFF"} />
+            <Feather
+              name="settings"
+              size={24}
+              color={showSettings ? theme.primary : "#FFFFFF"}
+            />
           </Pressable>
           <Pressable
             onPress={() => setShowGrid(!showGrid)}
@@ -648,13 +746,18 @@ export default function RecordScreen() {
               <Feather name="activity" size={18} color="#FFFFFF" />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Motion Detection</Text>
-                <Text style={styles.settingDesc}>Move device to start recording</Text>
+                <Text style={styles.settingDesc}>
+                  Move device to start recording
+                </Text>
               </View>
             </View>
             <Switch
               value={motionDetectionEnabled}
               onValueChange={setMotionDetectionEnabled}
-              trackColor={{ false: "rgba(255,255,255,0.2)", true: theme.primary }}
+              trackColor={{
+                false: "rgba(255,255,255,0.2)",
+                true: theme.primary,
+              }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -663,13 +766,18 @@ export default function RecordScreen() {
               <Feather name="shield" size={18} color="#FFFFFF" />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Injury Prevention</Text>
-                <Text style={styles.settingDesc}>Highlight high-impact areas</Text>
+                <Text style={styles.settingDesc}>
+                  Highlight high-impact areas
+                </Text>
               </View>
             </View>
             <Switch
               value={showInjuryPrevention}
               onValueChange={setShowInjuryPrevention}
-              trackColor={{ false: "rgba(255,255,255,0.2)", true: theme.warning }}
+              trackColor={{
+                false: "rgba(255,255,255,0.2)",
+                true: theme.warning,
+              }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -677,11 +785,23 @@ export default function RecordScreen() {
             <View style={styles.legendContainer}>
               <Text style={styles.legendTitle}>Risk Levels:</Text>
               <View style={styles.legendRow}>
-                <View style={[styles.legendDot, { backgroundColor: "#FF3B30" }]} />
+                <View
+                  style={[styles.legendDot, { backgroundColor: "#FF3B30" }]}
+                />
                 <Text style={styles.legendText}>High Risk</Text>
-                <View style={[styles.legendDot, { backgroundColor: "#FF9500", marginLeft: Spacing.md }]} />
+                <View
+                  style={[
+                    styles.legendDot,
+                    { backgroundColor: "#FF9500", marginLeft: Spacing.md },
+                  ]}
+                />
                 <Text style={styles.legendText}>Medium</Text>
-                <View style={[styles.legendDot, { backgroundColor: "#FFD60A", marginLeft: Spacing.md }]} />
+                <View
+                  style={[
+                    styles.legendDot,
+                    { backgroundColor: "#FFD60A", marginLeft: Spacing.md },
+                  ]}
+                />
                 <Text style={styles.legendText}>Low</Text>
               </View>
             </View>
@@ -700,26 +820,38 @@ export default function RecordScreen() {
       {recordingState === "waiting_motion" ? (
         <View style={styles.motionWaitingOverlay}>
           <View style={styles.motionLevelContainer}>
-            <View 
+            <View
               style={[
-                styles.motionLevelBar, 
-                { 
+                styles.motionLevelBar,
+                {
                   width: `${Math.max(motionLevel * 100, 5)}%`,
-                  backgroundColor: motionLevel > 0.3 ? theme.success : theme.primary,
-                }
-              ]} 
+                  backgroundColor:
+                    motionLevel > 0.3 ? theme.success : theme.primary,
+                },
+              ]}
             />
           </View>
           <Animated.View
             style={[
               styles.motionWaitingCircle,
-              { borderColor: motionLevel > 0.3 ? theme.success : `rgba(0,102,255,${0.3 + motionLevel * 0.7})` }
+              {
+                borderColor:
+                  motionLevel > 0.3
+                    ? theme.success
+                    : `rgba(0,102,255,${0.3 + motionLevel * 0.7})`,
+              },
             ]}
           >
-            <Feather name="activity" size={48} color={motionLevel > 0.3 ? theme.success : theme.primary} />
+            <Feather
+              name="activity"
+              size={48}
+              color={motionLevel > 0.3 ? theme.success : theme.primary}
+            />
           </Animated.View>
           <Text style={styles.motionWaitingText}>
-            {motionLevel > 0.2 ? "Motion detected..." : "Move to start recording"}
+            {motionLevel > 0.2
+              ? "Motion detected..."
+              : "Move to start recording"}
           </Text>
           <Text style={styles.motionSubtext}>
             Shake your device or start moving
@@ -764,16 +896,24 @@ export default function RecordScreen() {
           { paddingBottom: insets.bottom + Spacing.xl },
         ]}
       >
-        {Platform.OS !== "web" && !isCameraReady && recordingState === "idle" ? (
+        {Platform.OS !== "web" &&
+        !isCameraReady &&
+        recordingState === "idle" ? (
           <View style={styles.cameraInitializingContainer}>
             <Feather name="camera" size={24} color="rgba(255,255,255,0.6)" />
-            <Text style={styles.cameraInitializingText}>Camera initializing...</Text>
+            <Text style={styles.cameraInitializingText}>
+              Camera initializing...
+            </Text>
           </View>
         ) : null}
         <View style={styles.recordButtonContainer}>
           <AnimatedPressable
             onPress={handleStartRecording}
-            disabled={Platform.OS !== "web" && !isCameraReady && recordingState === "idle"}
+            disabled={
+              Platform.OS !== "web" &&
+              !isCameraReady &&
+              recordingState === "idle"
+            }
             onPressIn={() => {
               recordButtonScale.value = withSpring(0.9, { damping: 15 });
             }}
@@ -781,16 +921,20 @@ export default function RecordScreen() {
               recordButtonScale.value = withSpring(1, { damping: 15 });
             }}
             style={[
-              styles.recordButton, 
+              styles.recordButton,
               recordButtonAnimatedStyle,
-              Platform.OS !== "web" && !isCameraReady && recordingState === "idle" && styles.recordButtonDisabled,
+              Platform.OS !== "web" &&
+                !isCameraReady &&
+                recordingState === "idle" &&
+                styles.recordButtonDisabled,
             ]}
           >
             <View
               style={[
                 styles.recordButtonInner,
                 recordingState === "recording" && styles.recordButtonRecording,
-                recordingState === "waiting_motion" && styles.recordButtonWaiting,
+                recordingState === "waiting_motion" &&
+                  styles.recordButtonWaiting,
               ]}
             />
           </AnimatedPressable>

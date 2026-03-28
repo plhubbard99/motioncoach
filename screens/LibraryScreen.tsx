@@ -20,7 +20,11 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import Spacer from "@/components/Spacer";
 import type { LibraryStackParamList } from "@/navigation/LibraryStackNavigator";
-import { useSport, getDrillsForSport, SPORT_DRILLS } from "@/contexts/SportContext";
+import {
+  useSport,
+  getDrillsForSport,
+  SPORT_DRILLS,
+} from "@/contexts/SportContext";
 
 type LibraryScreenProps = {
   navigation: NativeStackNavigationProp<LibraryStackParamList, "Library">;
@@ -83,15 +87,15 @@ function DrillCard({ title, sport, duration, focus, onPress }: DrillCardProps) {
               color={theme.textSecondary}
               style={styles.metaIcon}
             />
-            <ThemedText
-              type="small"
-              style={{ color: theme.textSecondary }}
-            >
+            <ThemedText type="small" style={{ color: theme.textSecondary }}>
               {duration}
             </ThemedText>
           </View>
           <View
-            style={[styles.focusBadge, { backgroundColor: theme.primary + "20" }]}
+            style={[
+              styles.focusBadge,
+              { backgroundColor: theme.primary + "20" },
+            ]}
           >
             <ThemedText
               type="small"
@@ -120,7 +124,12 @@ interface ExternalResultCardProps {
   onPress: () => void;
 }
 
-function ExternalResultCard({ title, source, verified, onPress }: ExternalResultCardProps) {
+function ExternalResultCard({
+  title,
+  source,
+  verified,
+  onPress,
+}: ExternalResultCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
 
@@ -143,7 +152,12 @@ function ExternalResultCard({ title, source, verified, onPress }: ExternalResult
         animatedStyle,
       ]}
     >
-      <View style={[styles.externalIcon, { backgroundColor: theme.backgroundSecondary }]}>
+      <View
+        style={[
+          styles.externalIcon,
+          { backgroundColor: theme.backgroundSecondary },
+        ]}
+      >
         <Feather name="external-link" size={20} color={theme.primary} />
       </View>
       <View style={styles.externalContent}>
@@ -155,9 +169,17 @@ function ExternalResultCard({ title, source, verified, onPress }: ExternalResult
             {source}
           </ThemedText>
           {verified ? (
-            <View style={[styles.verifiedBadge, { backgroundColor: theme.success + "20" }]}>
+            <View
+              style={[
+                styles.verifiedBadge,
+                { backgroundColor: theme.success + "20" },
+              ]}
+            >
               <Feather name="check-circle" size={10} color={theme.success} />
-              <ThemedText type="small" style={[styles.verifiedText, { color: theme.success }]}>
+              <ThemedText
+                type="small"
+                style={[styles.verifiedText, { color: theme.success }]}
+              >
                 Verified
               </ThemedText>
             </View>
@@ -195,9 +217,7 @@ function FilterChip({ label, selected, onPress }: FilterChipProps) {
       style={[
         styles.filterChip,
         {
-          backgroundColor: selected
-            ? theme.primary
-            : theme.backgroundDefault,
+          backgroundColor: selected ? theme.primary : theme.backgroundDefault,
           borderColor: selected ? theme.primary : theme.border,
         },
         animatedStyle,
@@ -225,7 +245,12 @@ function SourceToggle({ source, onSourceChange }: SourceToggleProps) {
   const { theme } = useTheme();
 
   return (
-    <View style={[styles.sourceToggle, { backgroundColor: theme.backgroundSecondary }]}>
+    <View
+      style={[
+        styles.sourceToggle,
+        { backgroundColor: theme.backgroundSecondary },
+      ]}
+    >
       <Pressable
         onPress={() => onSourceChange("library")}
         style={[
@@ -276,7 +301,7 @@ function SourceToggle({ source, onSourceChange }: SourceToggleProps) {
 
 function getSportForDrill(drillId: string): string {
   for (const [sport, drills] of Object.entries(SPORT_DRILLS)) {
-    if (drills.some(d => d.id === drillId)) {
+    if (drills.some((d) => d.id === drillId)) {
       return sport;
     }
   }
@@ -284,12 +309,48 @@ function getSportForDrill(drillId: string): string {
 }
 
 const MOCK_EXTERNAL_RESULTS = [
-  { id: "e1", title: "Complete Guide to Basketball Shooting Form", source: "YouTube - Coach Carter", url: "https://youtube.com", verified: true },
-  { id: "e2", title: "Golf Swing Tips from PGA Pros", source: "Golf Digest", url: "https://golfdigest.com", verified: true },
-  { id: "e3", title: "Tennis Serve Masterclass", source: "Tennis Channel Academy", url: "https://tennischannel.com", verified: true },
-  { id: "e4", title: "Pro Running Form Analysis", source: "Runner's World", url: "https://runnersworld.com", verified: true },
-  { id: "e5", title: "Softball Pitching Techniques", source: "Fastpitch Network", url: "https://fastpitch.com", verified: false },
-  { id: "e6", title: "NFL Quarterback Training", source: "ESPN Training", url: "https://espn.com", verified: true },
+  {
+    id: "e1",
+    title: "Complete Guide to Basketball Shooting Form",
+    source: "YouTube - Coach Carter",
+    url: "https://youtube.com",
+    verified: true,
+  },
+  {
+    id: "e2",
+    title: "Golf Swing Tips from PGA Pros",
+    source: "Golf Digest",
+    url: "https://golfdigest.com",
+    verified: true,
+  },
+  {
+    id: "e3",
+    title: "Tennis Serve Masterclass",
+    source: "Tennis Channel Academy",
+    url: "https://tennischannel.com",
+    verified: true,
+  },
+  {
+    id: "e4",
+    title: "Pro Running Form Analysis",
+    source: "Runner's World",
+    url: "https://runnersworld.com",
+    verified: true,
+  },
+  {
+    id: "e5",
+    title: "Softball Pitching Techniques",
+    source: "Fastpitch Network",
+    url: "https://fastpitch.com",
+    verified: false,
+  },
+  {
+    id: "e6",
+    title: "NFL Quarterback Training",
+    source: "ESPN Training",
+    url: "https://espn.com",
+    verified: true,
+  },
 ];
 
 export default function LibraryScreen({ navigation }: LibraryScreenProps) {
@@ -299,8 +360,13 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
   const [localSelectedSport, setLocalSelectedSport] = useState("All");
   const [searchSource, setSearchSource] = useState<SearchSource>("library");
 
-  const effectiveSport = globalSport && localSelectedSport === "All" ? globalSport : localSelectedSport;
-  const allDrills = getDrillsForSport(effectiveSport === "All" ? null : effectiveSport);
+  const effectiveSport =
+    globalSport && localSelectedSport === "All"
+      ? globalSport
+      : localSelectedSport;
+  const allDrills = getDrillsForSport(
+    effectiveSport === "All" ? null : effectiveSport,
+  );
 
   const filteredDrills = allDrills
     .filter((drill) => {
@@ -309,20 +375,19 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
         .includes(searchQuery.toLowerCase());
       return matchesSearch;
     })
-    .map(drill => ({
+    .map((drill) => ({
       ...drill,
       sport: getSportForDrill(drill.id),
     }));
 
   const filteredExternal = MOCK_EXTERNAL_RESULTS.filter((result) =>
-    result.title.toLowerCase().includes(searchQuery.toLowerCase())
+    result.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleExternalPress = async (url: string) => {
     try {
       await Linking.openURL(url);
-    } catch (error) {
-    }
+    } catch {}
   };
 
   return (
@@ -341,7 +406,11 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
         />
         <TextInput
           style={[styles.searchInput, { color: theme.text }]}
-          placeholder={searchSource === "library" ? "Search Pocket Coach drills..." : "Search verified external sites..."}
+          placeholder={
+            searchSource === "library"
+              ? "Search Pocket Coach drills..."
+              : "Search verified external sites..."
+          }
           placeholderTextColor={theme.textSecondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -383,7 +452,9 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
           <Spacer height={Spacing.xl} />
 
           <ThemedText type="h4">
-            {effectiveSport === "All" ? "All Drills" : `${effectiveSport} Drills`}
+            {effectiveSport === "All"
+              ? "All Drills"
+              : `${effectiveSport} Drills`}
           </ThemedText>
 
           <Spacer height={Spacing.md} />
@@ -425,7 +496,10 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
         <>
           <View style={styles.externalHeader}>
             <Feather name="shield" size={16} color={theme.success} />
-            <ThemedText type="small" style={{ color: theme.textSecondary, marginLeft: Spacing.sm }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.textSecondary, marginLeft: Spacing.sm }}
+            >
               Showing results from verified coaching websites
             </ThemedText>
           </View>

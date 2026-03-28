@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const COACHES_STORAGE_KEY = "pocket_coach_coaches";
@@ -17,7 +24,9 @@ export interface CoachContact {
 
 interface CoachContextType {
   coaches: CoachContact[];
-  addCoach: (coach: Omit<CoachContact, "id" | "createdAt" | "isFavorite">) => void;
+  addCoach: (
+    coach: Omit<CoachContact, "id" | "createdAt" | "isFavorite">,
+  ) => void;
   updateCoach: (id: string, updates: Partial<CoachContact>) => void;
   deleteCoach: (id: string) => void;
   toggleFavorite: (id: string) => void;
@@ -34,12 +43,6 @@ export function CoachProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) {
-      saveData();
-    }
-  }, [coaches, isLoaded]);
-
   const loadData = async () => {
     try {
       const stored = await AsyncStorage.getItem(COACHES_STORAGE_KEY);
@@ -52,15 +55,23 @@ export function CoachProvider({ children }: { children: ReactNode }) {
     setIsLoaded(true);
   };
 
-  const saveData = async () => {
+  const saveData = useCallback(async () => {
     try {
       await AsyncStorage.setItem(COACHES_STORAGE_KEY, JSON.stringify(coaches));
     } catch (error) {
       console.error("Failed to save coaches:", error);
     }
-  };
+  }, [coaches]);
 
-  const addCoach = (coachData: Omit<CoachContact, "id" | "createdAt" | "isFavorite">) => {
+  useEffect(() => {
+    if (isLoaded) {
+      saveData();
+    }
+  }, [coaches, isLoaded, saveData]);
+
+  const addCoach = (
+    coachData: Omit<CoachContact, "id" | "createdAt" | "isFavorite">,
+  ) => {
     const now = Date.now();
     const newCoach: CoachContact = {
       ...coachData,
@@ -73,9 +84,7 @@ export function CoachProvider({ children }: { children: ReactNode }) {
 
   const updateCoach = (id: string, updates: Partial<CoachContact>) => {
     setCoaches((prev) =>
-      prev.map((coach) =>
-        coach.id === id ? { ...coach, ...updates } : coach
-      )
+      prev.map((coach) => (coach.id === id ? { ...coach, ...updates } : coach)),
     );
   };
 
@@ -86,8 +95,8 @@ export function CoachProvider({ children }: { children: ReactNode }) {
   const toggleFavorite = (id: string) => {
     setCoaches((prev) =>
       prev.map((coach) =>
-        coach.id === id ? { ...coach, isFavorite: !coach.isFavorite } : coach
-      )
+        coach.id === id ? { ...coach, isFavorite: !coach.isFavorite } : coach,
+      ),
     );
   };
 

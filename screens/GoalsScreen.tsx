@@ -47,15 +47,23 @@ const SPORTS = [
   "Other",
 ];
 
-function showAlert(title: string, message: string, buttons?: { text: string; onPress?: () => void; style?: "cancel" | "destructive" }[]) {
+function showAlert(
+  title: string,
+  message: string,
+  buttons?: {
+    text: string;
+    onPress?: () => void;
+    style?: "cancel" | "destructive";
+  }[],
+) {
   if (Platform.OS === "web") {
     if (buttons && buttons.length > 1) {
       const confirmed = window.confirm(`${title}\n\n${message}`);
       if (confirmed) {
-        const confirmBtn = buttons.find(b => b.style !== "cancel");
+        const confirmBtn = buttons.find((b) => b.style !== "cancel");
         confirmBtn?.onPress?.();
       } else {
-        const cancelBtn = buttons.find(b => b.style === "cancel");
+        const cancelBtn = buttons.find((b) => b.style === "cancel");
         cancelBtn?.onPress?.();
       }
     } else {
@@ -66,7 +74,11 @@ function showAlert(title: string, message: string, buttons?: { text: string; onP
     Alert.alert(
       title,
       message,
-      buttons?.map(b => ({ text: b.text, onPress: b.onPress, style: b.style }))
+      buttons?.map((b) => ({
+        text: b.text,
+        onPress: b.onPress,
+        style: b.style,
+      })),
     );
   }
 }
@@ -80,8 +92,12 @@ interface GoalCardProps {
 function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
-  const progress = goal.targetValue > 0 ? (goal.currentValue / goal.targetValue) * 100 : 0;
-  const daysLeft = Math.max(0, Math.ceil((goal.deadline - Date.now()) / (1000 * 60 * 60 * 24)));
+  const progress =
+    goal.targetValue > 0 ? (goal.currentValue / goal.targetValue) * 100 : 0;
+  const daysLeft = Math.max(
+    0,
+    Math.ceil((goal.deadline - Date.now()) / (1000 * 60 * 60 * 24)),
+  );
 
   const getCategoryIcon = () => {
     const cat = GOAL_CATEGORIES.find((c) => c.id === goal.category);
@@ -110,7 +126,7 @@ function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
           [
             { text: "Cancel", style: "cancel" },
             { text: "Delete", onPress: onDelete, style: "destructive" },
-          ]
+          ],
         );
       }}
       onPressIn={() => {
@@ -127,11 +143,24 @@ function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
       ]}
     >
       <View style={styles.goalHeader}>
-        <View style={[styles.categoryIcon, { backgroundColor: getProgressColor() + "20" }]}>
-          <Feather name={getCategoryIcon()} size={18} color={getProgressColor()} />
+        <View
+          style={[
+            styles.categoryIcon,
+            { backgroundColor: getProgressColor() + "20" },
+          ]}
+        >
+          <Feather
+            name={getCategoryIcon()}
+            size={18}
+            color={getProgressColor()}
+          />
         </View>
         <View style={styles.goalHeaderText}>
-          <ThemedText type="body" style={{ fontWeight: "600" }} numberOfLines={1}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600" }}
+            numberOfLines={1}
+          >
             {goal.title}
           </ThemedText>
           <ThemedText type="small" style={{ color: theme.textSecondary }}>
@@ -139,12 +168,30 @@ function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
           </ThemedText>
         </View>
         {goal.isCompleted ? (
-          <View style={[styles.completedBadge, { backgroundColor: theme.success }]}>
+          <View
+            style={[styles.completedBadge, { backgroundColor: theme.success }]}
+          >
             <Feather name="check" size={14} color="#FFFFFF" />
           </View>
         ) : (
-          <View style={[styles.daysLeftBadge, { backgroundColor: daysLeft < 7 ? theme.warning + "20" : theme.backgroundSecondary }]}>
-            <ThemedText type="small" style={{ color: daysLeft < 7 ? theme.warning : theme.textSecondary, fontWeight: "600" }}>
+          <View
+            style={[
+              styles.daysLeftBadge,
+              {
+                backgroundColor:
+                  daysLeft < 7
+                    ? theme.warning + "20"
+                    : theme.backgroundSecondary,
+              },
+            ]}
+          >
+            <ThemedText
+              type="small"
+              style={{
+                color: daysLeft < 7 ? theme.warning : theme.textSecondary,
+                fontWeight: "600",
+              }}
+            >
               {daysLeft}d
             </ThemedText>
           </View>
@@ -156,11 +203,19 @@ function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
           <ThemedText type="small" style={{ color: theme.textSecondary }}>
             {goal.currentValue} / {goal.targetValue} {goal.unit}
           </ThemedText>
-          <ThemedText type="small" style={{ color: getProgressColor(), fontWeight: "600" }}>
+          <ThemedText
+            type="small"
+            style={{ color: getProgressColor(), fontWeight: "600" }}
+          >
             {Math.round(progress)}%
           </ThemedText>
         </View>
-        <View style={[styles.progressBar, { backgroundColor: theme.backgroundSecondary }]}>
+        <View
+          style={[
+            styles.progressBar,
+            { backgroundColor: theme.backgroundSecondary },
+          ]}
+        >
           <Animated.View
             style={[
               styles.progressFill,
@@ -197,7 +252,9 @@ function GoalCard({ goal, onPress, onDelete }: GoalCardProps) {
 interface AddGoalModalProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (goal: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">) => void;
+  onAdd: (
+    goal: Omit<Goal, "id" | "createdAt" | "updatedAt" | "isCompleted">,
+  ) => void;
 }
 
 function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
@@ -227,7 +284,11 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
       showAlert("Missing Title", "Please enter a goal title.");
       return;
     }
-    if (!targetValue || isNaN(Number(targetValue)) || Number(targetValue) <= 0) {
+    if (
+      !targetValue ||
+      isNaN(Number(targetValue)) ||
+      Number(targetValue) <= 0
+    ) {
       showAlert("Invalid Target", "Please enter a valid target value.");
       return;
     }
@@ -256,8 +317,14 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <ThemedView style={[styles.modalContainer, { paddingTop: insets.top + Spacing.lg }]}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+    >
+      <ThemedView
+        style={[styles.modalContainer, { paddingTop: insets.top + Spacing.lg }]}
+      >
         <View style={styles.modalHeader}>
           <ThemedText type="h3">New Goal</ThemedText>
           <Pressable onPress={onClose} style={styles.closeButton}>
@@ -266,7 +333,10 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
         </View>
 
         <ScreenScrollView>
-          <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+          >
             Goal Title
           </ThemedText>
           <TextInput
@@ -276,13 +346,20 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
             placeholderTextColor={theme.textSecondary}
             style={[
               styles.input,
-              { backgroundColor: theme.backgroundDefault, color: theme.text, borderColor: theme.border },
+              {
+                backgroundColor: theme.backgroundDefault,
+                color: theme.text,
+                borderColor: theme.border,
+              },
             ]}
           />
 
           <Spacer height={Spacing.lg} />
 
-          <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+          >
             Description (Optional)
           </ThemedText>
           <TextInput
@@ -295,13 +372,20 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
             style={[
               styles.input,
               styles.textArea,
-              { backgroundColor: theme.backgroundDefault, color: theme.text, borderColor: theme.border },
+              {
+                backgroundColor: theme.backgroundDefault,
+                color: theme.text,
+                borderColor: theme.border,
+              },
             ]}
           />
 
           <Spacer height={Spacing.lg} />
 
-          <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+          >
             Sport
           </ThemedText>
           <Pressable
@@ -309,14 +393,29 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
             style={[
               styles.input,
               styles.picker,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+              {
+                backgroundColor: theme.backgroundDefault,
+                borderColor: theme.border,
+              },
             ]}
           >
             <ThemedText>{sport}</ThemedText>
-            <Feather name={showSportPicker ? "chevron-up" : "chevron-down"} size={20} color={theme.textSecondary} />
+            <Feather
+              name={showSportPicker ? "chevron-up" : "chevron-down"}
+              size={20}
+              color={theme.textSecondary}
+            />
           </Pressable>
           {showSportPicker ? (
-            <View style={[styles.pickerOptions, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+            <View
+              style={[
+                styles.pickerOptions,
+                {
+                  backgroundColor: theme.backgroundDefault,
+                  borderColor: theme.border,
+                },
+              ]}
+            >
               {SPORTS.map((s) => (
                 <Pressable
                   key={s}
@@ -324,9 +423,16 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
                     setSport(s);
                     setShowSportPicker(false);
                   }}
-                  style={[styles.pickerOption, sport === s && { backgroundColor: theme.primary + "20" }]}
+                  style={[
+                    styles.pickerOption,
+                    sport === s && { backgroundColor: theme.primary + "20" },
+                  ]}
                 >
-                  <ThemedText style={{ color: sport === s ? theme.primary : theme.text }}>{s}</ThemedText>
+                  <ThemedText
+                    style={{ color: sport === s ? theme.primary : theme.text }}
+                  >
+                    {s}
+                  </ThemedText>
                 </Pressable>
               ))}
             </View>
@@ -334,7 +440,10 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
 
           <Spacer height={Spacing.lg} />
 
-          <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+          >
             Category
           </ThemedText>
           <View style={styles.categoryGrid}>
@@ -344,18 +453,29 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
                 onPress={() => setCategory(cat.id as Goal["category"])}
                 style={[
                   styles.categoryButton,
-                  { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-                  category === cat.id && { borderColor: theme.primary, backgroundColor: theme.primary + "10" },
+                  {
+                    backgroundColor: theme.backgroundDefault,
+                    borderColor: theme.border,
+                  },
+                  category === cat.id && {
+                    borderColor: theme.primary,
+                    backgroundColor: theme.primary + "10",
+                  },
                 ]}
               >
                 <Feather
                   name={cat.icon}
                   size={18}
-                  color={category === cat.id ? theme.primary : theme.textSecondary}
+                  color={
+                    category === cat.id ? theme.primary : theme.textSecondary
+                  }
                 />
                 <ThemedText
                   type="small"
-                  style={{ color: category === cat.id ? theme.primary : theme.text, marginTop: 4 }}
+                  style={{
+                    color: category === cat.id ? theme.primary : theme.text,
+                    marginTop: 4,
+                  }}
                 >
                   {cat.label}
                 </ThemedText>
@@ -367,7 +487,10 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+              <ThemedText
+                type="body"
+                style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+              >
                 Target
               </ThemedText>
               <TextInput
@@ -378,12 +501,19 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
                 keyboardType="numeric"
                 style={[
                   styles.input,
-                  { backgroundColor: theme.backgroundDefault, color: theme.text, borderColor: theme.border },
+                  {
+                    backgroundColor: theme.backgroundDefault,
+                    color: theme.text,
+                    borderColor: theme.border,
+                  },
                 ]}
               />
             </View>
             <View style={styles.halfInput}>
-              <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+              <ThemedText
+                type="body"
+                style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+              >
                 Unit
               </ThemedText>
               <TextInput
@@ -393,7 +523,11 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
                 placeholderTextColor={theme.textSecondary}
                 style={[
                   styles.input,
-                  { backgroundColor: theme.backgroundDefault, color: theme.text, borderColor: theme.border },
+                  {
+                    backgroundColor: theme.backgroundDefault,
+                    color: theme.text,
+                    borderColor: theme.border,
+                  },
                 ]}
               />
             </View>
@@ -401,7 +535,10 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
 
           <Spacer height={Spacing.lg} />
 
-          <ThemedText type="body" style={{ fontWeight: "600", marginBottom: Spacing.sm }}>
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginBottom: Spacing.sm }}
+          >
             Deadline (days from now)
           </ThemedText>
           <TextInput
@@ -412,7 +549,11 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
             keyboardType="numeric"
             style={[
               styles.input,
-              { backgroundColor: theme.backgroundDefault, color: theme.text, borderColor: theme.border },
+              {
+                backgroundColor: theme.backgroundDefault,
+                color: theme.text,
+                borderColor: theme.border,
+              },
             ]}
           />
 
@@ -423,7 +564,14 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
             style={[styles.addButton, { backgroundColor: theme.primary }]}
           >
             <Feather name="plus" size={20} color="#FFFFFF" />
-            <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: Spacing.sm }}>
+            <ThemedText
+              type="body"
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "600",
+                marginLeft: Spacing.sm,
+              }}
+            >
               Create Goal
             </ThemedText>
           </Pressable>
@@ -437,9 +585,12 @@ function AddGoalModal({ visible, onClose, onAdd }: AddGoalModalProps) {
 
 export default function GoalsScreen() {
   const { theme } = useTheme();
-  const { goals, addGoal, deleteGoal, getActiveGoals, getCompletedGoals } = useGoals();
+  const { goals, addGoal, deleteGoal, getActiveGoals, getCompletedGoals } =
+    useGoals();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [filter, setFilter] = useState<"active" | "completed" | "all">("active");
+  const [filter, setFilter] = useState<"active" | "completed" | "all">(
+    "active",
+  );
 
   const activeGoals = getActiveGoals();
   const completedGoals = getCompletedGoals();
@@ -448,23 +599,29 @@ export default function GoalsScreen() {
     filter === "active"
       ? activeGoals
       : filter === "completed"
-      ? completedGoals
-      : goals;
+        ? completedGoals
+        : goals;
 
   const stats = {
     total: goals.length,
     active: activeGoals.length,
     completed: completedGoals.length,
-    avgProgress: goals.length > 0
-      ? Math.round(
-          goals.reduce((sum, g) => sum + (g.currentValue / g.targetValue) * 100, 0) / goals.length
-        )
-      : 0,
+    avgProgress:
+      goals.length > 0
+        ? Math.round(
+            goals.reduce(
+              (sum, g) => sum + (g.currentValue / g.targetValue) * 100,
+              0,
+            ) / goals.length,
+          )
+        : 0,
   };
 
   return (
     <ScreenScrollView>
-      <View style={[styles.statsCard, { backgroundColor: theme.backgroundDefault }]}>
+      <View
+        style={[styles.statsCard, { backgroundColor: theme.backgroundDefault }]}
+      >
         <View style={styles.statsGrid}>
           <View style={styles.statItem}>
             <ThemedText type="h2" style={{ color: theme.primary }}>
@@ -474,7 +631,9 @@ export default function GoalsScreen() {
               Active
             </ThemedText>
           </View>
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+          <View
+            style={[styles.statDivider, { backgroundColor: theme.border }]}
+          />
           <View style={styles.statItem}>
             <ThemedText type="h2" style={{ color: theme.success }}>
               {stats.completed}
@@ -483,7 +642,9 @@ export default function GoalsScreen() {
               Completed
             </ThemedText>
           </View>
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+          <View
+            style={[styles.statDivider, { backgroundColor: theme.border }]}
+          />
           <View style={styles.statItem}>
             <ThemedText type="h2" style={{ color: "#FFB800" }}>
               {stats.avgProgress}%
@@ -504,12 +665,19 @@ export default function GoalsScreen() {
             onPress={() => setFilter(f)}
             style={[
               styles.filterButton,
-              { backgroundColor: filter === f ? theme.primary : theme.backgroundDefault },
+              {
+                backgroundColor:
+                  filter === f ? theme.primary : theme.backgroundDefault,
+              },
             ]}
           >
             <ThemedText
               type="small"
-              style={{ color: filter === f ? "#FFFFFF" : theme.text, fontWeight: "600", textTransform: "capitalize" }}
+              style={{
+                color: filter === f ? "#FFFFFF" : theme.text,
+                fontWeight: "600",
+                textTransform: "capitalize",
+              }}
             >
               {f}
             </ThemedText>
@@ -520,19 +688,44 @@ export default function GoalsScreen() {
       <Spacer height={Spacing.lg} />
 
       {filteredGoals.length === 0 ? (
-        <Animated.View entering={FadeIn} style={[styles.emptyState, { backgroundColor: theme.backgroundDefault }]}>
-          <View style={[styles.emptyIcon, { backgroundColor: theme.primary + "20" }]}>
+        <Animated.View
+          entering={FadeIn}
+          style={[
+            styles.emptyState,
+            { backgroundColor: theme.backgroundDefault },
+          ]}
+        >
+          <View
+            style={[
+              styles.emptyIcon,
+              { backgroundColor: theme.primary + "20" },
+            ]}
+          >
             <Feather name="target" size={32} color={theme.primary} />
           </View>
-          <ThemedText type="body" style={{ fontWeight: "600", marginTop: Spacing.md }}>
-            {filter === "active" ? "No Active Goals" : filter === "completed" ? "No Completed Goals" : "No Goals Yet"}
+          <ThemedText
+            type="body"
+            style={{ fontWeight: "600", marginTop: Spacing.md }}
+          >
+            {filter === "active"
+              ? "No Active Goals"
+              : filter === "completed"
+                ? "No Completed Goals"
+                : "No Goals Yet"}
           </ThemedText>
-          <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center", marginTop: Spacing.xs }}>
+          <ThemedText
+            type="small"
+            style={{
+              color: theme.textSecondary,
+              textAlign: "center",
+              marginTop: Spacing.xs,
+            }}
+          >
             {filter === "active"
               ? "Create a goal to start tracking your progress"
               : filter === "completed"
-              ? "Complete some goals to see them here"
-              : "Tap the + button to create your first goal"}
+                ? "Complete some goals to see them here"
+                : "Tap the + button to create your first goal"}
           </ThemedText>
         </Animated.View>
       ) : (
